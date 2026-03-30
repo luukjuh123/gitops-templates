@@ -1,0 +1,5 @@
+owner: luukjuh123
+git-base-url: https://api.github.com/
+upload-url: https://uploads.github.com/
+pages-branch: gh-pages
+packages-with-index: false

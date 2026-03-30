@@ -1,0 +1,82 @@
+# Example: How a consumer galaxy overrides the base chart
+# Copy this file to your galaxy and customize the values below.
+#
+# Usage:
+#   helm template my-release ../../charts/app-base/ -f service-values.yaml
+#   helm install my-release ../../charts/app-base/ -f service-values.yaml
+
+name: my-api-service
+
+replicas: 3
+
+image:
+  repository: ghcr.io/myorg/my-api-service
+  tag: "1.2.0"
+  pullPolicy: IfNotPresent
+
+serviceAccount:
+  create: true
+  annotations:
+    eks.amazonaws.com/role-arn: "arn:aws:iam::123456789012:role/my-api-role"
+
+service:
+  enabled: true
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  host: api.example.com
+  path: /
+  pathType: Prefix
+  tls:
+    - secretName: api-tls
+      hosts:
+        - api.example.com
+
+hpa:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 75
+
+configMap:
+  enabled: true
+  data:
+    LOG_LEVEL: "info"
+    API_VERSION: "v1"
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 256Mi
+  limits:
+    cpu: "1"
+    memory: 512Mi
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 8080
+  initialDelaySeconds: 15
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /ready
+    port: 8080
+  initialDelaySeconds: 5
+  periodSeconds: 5
+
+env:
+  - name: DATABASE_URL
+    valueFrom:
+      secretKeyRef:
+        name: db-credentials
+        key: url
+  - name: LOG_FORMAT
+    value: "json"

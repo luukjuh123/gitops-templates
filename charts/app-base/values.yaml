@@ -1,0 +1,128 @@
+# Default values for app-base chart
+# Override these in your galaxy's values file
+
+# -- Application name (used for resource naming)
+name: app
+
+# -- Number of pod replicas
+replicas: 1
+
+image:
+  # -- Container image repository
+  repository: nginx
+  # -- Container image tag
+  tag: "latest"
+  # -- Image pull policy
+  pullPolicy: IfNotPresent
+
+# -- Image pull secrets (list of secret names)
+imagePullSecrets: []
+
+serviceAccount:
+  # -- Whether to create a ServiceAccount
+  create: true
+  # -- ServiceAccount name (defaults to release fullname)
+  name: ""
+  # -- Annotations for the ServiceAccount
+  annotations: {}
+
+service:
+  # -- Whether to create a Service
+  enabled: true
+  # -- Service type (ClusterIP, NodePort, LoadBalancer)
+  type: ClusterIP
+  # -- Service port
+  port: 80
+  # -- Container target port
+  targetPort: 80
+  # -- Additional service annotations
+  annotations: {}
+
+ingress:
+  # -- Whether to create an Ingress
+  enabled: false
+  # -- Ingress class name
+  className: ""
+  # -- Ingress annotations
+  annotations: {}
+  # -- Ingress hostname
+  host: ""
+  # -- Ingress path
+  path: /
+  # -- Ingress path type
+  pathType: Prefix
+  # -- TLS configuration
+  tls: []
+  #  - secretName: my-tls-secret
+  #    hosts:
+  #      - example.com
+
+hpa:
+  # -- Whether to create a HorizontalPodAutoscaler
+  enabled: false
+  # -- Minimum replicas
+  minReplicas: 1
+  # -- Maximum replicas
+  maxReplicas: 10
+  # -- Target CPU utilization percentage
+  targetCPUUtilizationPercentage: 80
+  # -- Target memory utilization percentage (optional)
+  targetMemoryUtilizationPercentage: ""
+
+configMap:
+  # -- Whether to create a ConfigMap
+  enabled: false
+  # -- ConfigMap data (key-value pairs)
+  data: {}
+
+resources:
+  # -- Resource requests
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  # -- Resource limits
+  limits:
+    cpu: 500m
+    memory: 256Mi
+
+# -- Pod labels (merged with standard labels)
+podLabels: {}
+
+# -- Pod annotations
+podAnnotations: {}
+
+# -- Node selector
+nodeSelector: {}
+
+# -- Tolerations
+tolerations: []
+
+# -- Affinity rules
+affinity: {}
+
+# -- Container liveness probe
+livenessProbe: {}
+#  httpGet:
+#    path: /health
+#    port: http
+#  initialDelaySeconds: 10
+#  periodSeconds: 10
+
+# -- Container readiness probe
+readinessProbe: {}
+#  httpGet:
+#    path: /ready
+#    port: http
+#  initialDelaySeconds: 5
+#  periodSeconds: 5
+
+# -- Additional environment variables
+env: []
+#  - name: MY_VAR
+#    value: "my-value"
+
+# -- Additional volume mounts
+volumeMounts: []
+
+# -- Additional volumes
+volumes: []
