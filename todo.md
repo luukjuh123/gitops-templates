@@ -13,7 +13,7 @@
 
 ## Priority: Medium
 - [ ] Create example consumer values file (`examples/service-values.yaml`)
-- [ ] Add kubeval/kubeconform validation to CI workflow
+- [x] Add kubeval/kubeconform validation to CI workflow
 - [ ] Create Kustomize base as alternative to Helm (`kustomize/base/`)
 
 ## Priority: Low
