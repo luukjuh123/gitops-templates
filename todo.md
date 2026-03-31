@@ -8,7 +8,7 @@
 - [ ] Write HPA template (`charts/app-base/templates/hpa.yaml`)
 - [ ] Write ConfigMap template (`charts/app-base/templates/configmap.yaml`)
 - [ ] Write ServiceAccount template (`charts/app-base/templates/serviceaccount.yaml`)
-- [x] Create `values.schema.json` for the base chart -- PR #5
+- [x] Create `values.schema.json` for the base chart -- PR #4
 - [ ] Add GitHub Actions lint workflow (`.github/workflows/lint.yml`)
 
 ## Priority: Medium
