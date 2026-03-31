@@ -105,17 +105,54 @@
           "additionalProperties": { "type": "string" },
           "default": {}
         },
+        "hosts": {
+          "type": "array",
+          "description": "List of hosts with their paths (preferred multi-host configuration)",
+          "items": {
+            "type": "object",
+            "required": ["host", "paths"],
+            "properties": {
+              "host": {
+                "type": "string",
+                "description": "Hostname for this ingress rule"
+              },
+              "paths": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": ["path", "pathType"],
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "description": "URL path"
+                    },
+                    "pathType": {
+                      "type": "string",
+                      "enum": ["Prefix", "Exact", "ImplementationSpecific"],
+                      "description": "Kubernetes pathType"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": []
+        },
         "host": {
           "type": "string",
+          "description": "Single hostname (legacy; ignored when hosts is non-empty)",
           "default": ""
         },
         "path": {
           "type": "string",
+          "description": "Single path (legacy; used with host)",
           "default": "/"
         },
         "pathType": {
           "type": "string",
           "enum": ["Prefix", "Exact", "ImplementationSpecific"],
+          "description": "Path type for single-host mode",
           "default": "Prefix"
         },
         "tls": {
