@@ -6,8 +6,8 @@
 - [ ] Write Service template (`charts/app-base/templates/service.yaml`)
 - [ ] Write Ingress template (`charts/app-base/templates/ingress.yaml`)
 - [ ] Write HPA template (`charts/app-base/templates/hpa.yaml`)
-- [ ] Write ConfigMap template (`charts/app-base/templates/configmap.yaml`)
-- [ ] Write ServiceAccount template (`charts/app-base/templates/serviceaccount.yaml`)
+- [x] Write ConfigMap template (`charts/app-base/templates/configmap.yaml`) -- PR #3
+- [x] Write ServiceAccount template (`charts/app-base/templates/serviceaccount.yaml`) -- PR #4
 - [ ] Create `values.schema.json` for the base chart
 - [ ] Add GitHub Actions lint workflow (`.github/workflows/lint.yml`)
 
