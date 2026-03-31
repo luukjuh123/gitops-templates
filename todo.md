@@ -2,7 +2,7 @@
 
 ## Priority: High
 - [x] Create base Helm chart structure (`charts/app-base/Chart.yaml`, `values.yaml`, `_helpers.tpl`) -- PR #8
-- [ ] Write Deployment template (`charts/app-base/templates/deployment.yaml`)
+- [x] Write Deployment template (`charts/app-base/templates/deployment.yaml`)
 - [ ] Write Service template (`charts/app-base/templates/service.yaml`)
 - [ ] Write Ingress template (`charts/app-base/templates/ingress.yaml`)
 - [ ] Write HPA template (`charts/app-base/templates/hpa.yaml`)
