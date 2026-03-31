@@ -18,7 +18,7 @@
 
 ## Priority: Low
 - [ ] Add chart versioning and release workflow
-- [ ] Create additional chart variants (CronJob, StatefulSet)
+- [x] Create additional chart variants (CronJob, StatefulSet) -- PR #TBD
 - [ ] Add Helm chart repository index for proper `helm repo add` support
 
 ## Completed
