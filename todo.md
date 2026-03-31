@@ -9,7 +9,7 @@
 - [ ] Write ConfigMap template (`charts/app-base/templates/configmap.yaml`)
 - [ ] Write ServiceAccount template (`charts/app-base/templates/serviceaccount.yaml`)
 - [ ] Create `values.schema.json` for the base chart
-- [ ] Add GitHub Actions lint workflow (`.github/workflows/lint.yml`)
+- [x] Add GitHub Actions lint workflow (`.github/workflows/lint.yml`)
 
 ## Priority: Medium
 - [ ] Create example consumer values file (`examples/service-values.yaml`)
