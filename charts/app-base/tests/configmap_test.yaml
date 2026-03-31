@@ -1,0 +1,70 @@
+suite: ConfigMap template tests
+templates:
+  - templates/configmap.yaml
+tests:
+  - it: should not render when configMap.enabled is false (default)
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should render a ConfigMap when configMap.enabled is true
+    set:
+      configMap.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ConfigMap
+      - equal:
+          path: apiVersion
+          value: v1
+
+  - it: should use the fullname for metadata.name
+    set:
+      name: my-app
+      configMap.enabled: true
+    asserts:
+      - equal:
+          path: metadata.name
+          value: my-app
+
+  - it: should include standard labels
+    set:
+      configMap.enabled: true
+    asserts:
+      - isNotEmpty:
+          path: metadata.labels["helm.sh/chart"]
+      - isNotEmpty:
+          path: metadata.labels["app.kubernetes.io/name"]
+      - isNotEmpty:
+          path: metadata.labels["app.kubernetes.io/instance"]
+
+  - it: should populate a single key-value pair in data
+    set:
+      configMap.enabled: true
+      configMap.data.LOG_LEVEL: debug
+    asserts:
+      - equal:
+          path: data.LOG_LEVEL
+          value: "debug"
+
+  - it: should populate multiple key-value pairs in data
+    set:
+      configMap.enabled: true
+      configMap.data.LOG_LEVEL: info
+      configMap.data.API_VERSION: v2
+    asserts:
+      - equal:
+          path: data.LOG_LEVEL
+          value: "info"
+      - equal:
+          path: data.API_VERSION
+          value: "v2"
+
+  - it: should render an empty data section when configMap.data is empty
+    set:
+      configMap.enabled: true
+      configMap.data: {}
+    asserts:
+      - isEmpty:
+          path: data
