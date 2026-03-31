@@ -17,7 +17,7 @@
 - [ ] Create Kustomize base as alternative to Helm (`kustomize/base/`)
 
 ## Priority: Low
-- [ ] Add chart versioning and release workflow
+- [x] Add chart versioning and release workflow
 - [ ] Create additional chart variants (CronJob, StatefulSet)
 - [ ] Add Helm chart repository index for proper `helm repo add` support
 
