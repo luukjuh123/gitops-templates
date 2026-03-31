@@ -68,3 +68,20 @@ tests:
     asserts:
       - isEmpty:
           path: data
+
+  - it: should render annotations when configMap.annotations is set
+    set:
+      configMap.enabled: true
+      configMap.annotations:
+        my-annotation: "my-value"
+    asserts:
+      - equal:
+          path: metadata.annotations["my-annotation"]
+          value: "my-value"
+
+  - it: should not render annotations key when configMap.annotations is empty
+    set:
+      configMap.enabled: true
+    asserts:
+      - notExists:
+          path: metadata.annotations
