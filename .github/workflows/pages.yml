@@ -1,0 +1,101 @@
+name: Publish Helm Repo to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "charts/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  lint:
+    name: Lint charts before publishing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.14.0
+
+      - name: Lint all charts
+        run: |
+          failed=0
+          for chart in charts/*/; do
+            echo "Linting $chart"
+            helm lint "$chart" || failed=1
+          done
+          exit $failed
+
+  publish:
+    name: Package and publish Helm repo index
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.14.0
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Package all charts into temp directory
+        run: |
+          mkdir -p /tmp/helm-packages
+          for chart in charts/*/; do
+            echo "Packaging $chart"
+            helm package "$chart" --destination /tmp/helm-packages/
+          done
+          echo "Packaged charts:"
+          ls /tmp/helm-packages/
+
+      - name: Checkout or create gh-pages branch
+        run: |
+          if git ls-remote --exit-code origin gh-pages; then
+            git fetch origin gh-pages
+            git checkout gh-pages
+          else
+            git checkout --orphan gh-pages
+            git rm -rf .
+            echo "# Helm Chart Repository" > README.md
+            git add README.md
+            git commit -m "chore: initialise gh-pages branch"
+          fi
+
+      - name: Copy packaged charts and generate index.yaml
+        run: |
+          PAGES_URL="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
+          cp /tmp/helm-packages/*.tgz .
+          if [ -f index.yaml ]; then
+            helm repo index /tmp/helm-packages/ --url "$PAGES_URL" --merge index.yaml
+          else
+            helm repo index /tmp/helm-packages/ --url "$PAGES_URL"
+          fi
+          cp /tmp/helm-packages/index.yaml index.yaml
+          echo "Generated index.yaml:"
+          cat index.yaml
+
+      - name: Commit and push to gh-pages
+        run: |
+          git add index.yaml *.tgz
+          if git diff --cached --quiet; then
+            echo "No changes to publish"
+          else
+            git commit -m "chore: publish Helm repo index [skip ci]"
+            git push origin gh-pages
+          fi
