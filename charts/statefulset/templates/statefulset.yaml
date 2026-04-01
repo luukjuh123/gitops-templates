@@ -1,20 +1,22 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: {{ include "app-base.fullname" . }}
+  name: {{ include "statefulset.fullname" . }}
   labels:
-    {{- include "app-base.labels" . | nindent 4 }}
+    {{- include "statefulset.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.hpa.enabled }}
   replicas: {{ .Values.replicas }}
-  {{- end }}
+  serviceName: {{ include "statefulset.fullname" . }}
+  podManagementPolicy: {{ .Values.podManagementPolicy }}
+  updateStrategy:
+    type: {{ .Values.updateStrategy.type }}
   selector:
     matchLabels:
-      {{- include "app-base.selectorLabels" . | nindent 6 }}
+      {{- include "statefulset.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "app-base.selectorLabels" . | nindent 8 }}
+        {{- include "statefulset.selectorLabels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -29,11 +31,11 @@ spec:
         - name: {{ . }}
         {{- end }}
       {{- end }}
-      {{- if or .Values.serviceAccount.create .Values.serviceAccount.name }}
-      serviceAccountName: {{ include "app-base.serviceAccountName" . }}
+      {{- if .Values.serviceAccount.create }}
+      serviceAccountName: {{ include "statefulset.serviceAccountName" . }}
       {{- end }}
       containers:
-        - name: {{ include "app-base.name" . }}
+        - name: {{ include "statefulset.name" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
@@ -54,9 +56,15 @@ spec:
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
+          {{- if or .Values.persistence.enabled .Values.volumeMounts }}
           volumeMounts:
+            {{- if .Values.persistence.enabled }}
+            - name: data
+              mountPath: /data
+            {{- end }}
+            {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
+            {{- end }}
           {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
@@ -74,3 +82,19 @@ spec:
       volumes:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+  {{- if .Values.persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+        labels:
+          {{- include "statefulset.labels" . | nindent 10 }}
+      spec:
+        accessModes:
+          - {{ .Values.persistence.accessMode }}
+        {{- if .Values.persistence.storageClass }}
+        storageClassName: {{ .Values.persistence.storageClass }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size }}
+  {{- end }}
