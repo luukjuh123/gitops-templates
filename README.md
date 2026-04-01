@@ -26,20 +26,29 @@ examples/
   service-values.yaml    # Example consumer values file
 .github/
   workflows/
-    lint.yml             # Runs helm lint on every PR
+    lint.yml             # Runs helm lint + kubeconform + version-check on every PR
+    release.yml          # Packages and releases charts to gh-pages on push to main
+.cr.yaml                 # chart-releaser configuration
 ```
 
 ## How other galaxies use this chart
 
 ### Option 1: Helm dependency (recommended)
 
-In your galaxy's `Chart.yaml`:
+First add the Helm repository (published automatically to GitHub Pages on every release):
+
+```bash
+helm repo add gitops-templates https://luukjuh123.github.io/gitops-templates
+helm repo update
+```
+
+In your galaxy's `Chart.yaml`, pin the chart to a specific version:
 
 ```yaml
 dependencies:
   - name: app-base
     version: "0.1.0"
-    repository: "https://raw.githubusercontent.com/<owner>/gitops-templates/main/charts/"
+    repository: "https://luukjuh123.github.io/gitops-templates"
 ```
 
 Then create a `values.yaml` that overrides the base:
@@ -80,6 +89,33 @@ resources:
 patchesStrategicMerge:
   - patches/deployment.yaml
 ```
+
+## Chart versioning
+
+Charts in this repository follow [Semantic Versioning](https://semver.org/):
+
+| Change type | Version bump | Example |
+|---|---|---|
+| Bug fix in a template or a default value correction | `patch` | `0.1.0` -> `0.1.1` |
+| New optional value or backwards-compatible feature | `minor` | `0.1.0` -> `0.2.0` |
+| Renamed/removed required values or structural changes | `major` | `0.1.0` -> `1.0.0` |
+
+The `version` field in `Chart.yaml` must be bumped on every PR that modifies chart files. The
+`lint.yml` CI workflow enforces this via the `version-check` job — PRs that change chart source
+files without bumping the version will fail CI.
+
+The `appVersion` field in `Chart.yaml` tracks the default application version this chart is
+designed for and is independent of the chart version.
+
+### Release process
+
+Releases happen automatically:
+
+1. Merge a PR to `main` that bumps `version` in `Chart.yaml`.
+2. The `release.yml` workflow detects the new version, packages the chart as a `.tgz`,
+   creates a GitHub Release with the package as an asset, and updates the `index.yaml` on
+   the `gh-pages` branch.
+3. Consumers running `helm repo update` will see the new version immediately.
 
 ## Getting started
 
