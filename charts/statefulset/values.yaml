@@ -1,8 +1,8 @@
-# Default values for app-base chart
+# Default values for statefulset chart
 # Override these in your galaxy's values file
 
 # -- Application name (used for resource naming)
-name: app
+name: statefulset
 
 # -- Number of pod replicas
 replicas: 1
@@ -18,6 +18,13 @@ image:
 # -- Image pull secrets (list of secret names)
 imagePullSecrets: []
 
+# -- Pod management policy (OrderedReady or Parallel)
+podManagementPolicy: OrderedReady
+
+updateStrategy:
+  # -- Update strategy type (RollingUpdate or OnDelete)
+  type: RollingUpdate
+
 serviceAccount:
   # -- Whether to create a ServiceAccount
   create: true
@@ -27,10 +34,6 @@ serviceAccount:
   annotations: {}
 
 service:
-  # -- Whether to create a Service
-  enabled: true
-  # -- Service type (ClusterIP, NodePort, LoadBalancer)
-  type: ClusterIP
   # -- Service port
   port: 80
   # -- Container target port
@@ -38,44 +41,21 @@ service:
   # -- Additional service annotations
   annotations: {}
 
-ingress:
-  # -- Whether to create an Ingress
-  enabled: false
-  # -- Ingress class name
-  className: ""
-  # -- Ingress annotations
-  annotations: {}
-  # -- Ingress hostname
-  host: ""
-  # -- Ingress path
-  path: /
-  # -- Ingress path type
-  pathType: Prefix
-  # -- TLS configuration
-  tls: []
-  #  - secretName: my-tls-secret
-  #    hosts:
-  #      - example.com
-
-hpa:
-  # -- Whether to create a HorizontalPodAutoscaler
-  enabled: false
-  # -- Minimum replicas
-  minReplicas: 1
-  # -- Maximum replicas
-  maxReplicas: 10
-  # -- Target CPU utilization percentage
-  targetCPUUtilizationPercentage: 80
-  # -- Target memory utilization percentage (optional)
-  targetMemoryUtilizationPercentage: ""
-
 configMap:
   # -- Whether to create a ConfigMap
   enabled: false
-  # -- Annotations for the ConfigMap
-  annotations: {}
   # -- ConfigMap data (key-value pairs)
   data: {}
+
+persistence:
+  # -- Whether to enable persistent storage
+  enabled: true
+  # -- Storage class name (empty = cluster default)
+  storageClass: ""
+  # -- Access mode for the persistent volume claim
+  accessMode: ReadWriteOnce
+  # -- Size of the persistent volume claim
+  size: 1Gi
 
 resources:
   # -- Resource requests

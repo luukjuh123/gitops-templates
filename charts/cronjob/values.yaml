@@ -1,0 +1,87 @@
+# Default values for cronjob chart
+# Override these in your galaxy's values file
+
+# -- Application name (used for resource naming)
+name: cronjob
+
+# -- Cron schedule expression
+schedule: "0 * * * *"
+
+image:
+  # -- Container image repository
+  repository: nginx
+  # -- Container image tag
+  tag: "latest"
+  # -- Image pull policy
+  pullPolicy: IfNotPresent
+
+# -- Image pull secrets (list of secret names)
+imagePullSecrets: []
+
+# -- Restart policy for the job pod (OnFailure or Never)
+restartPolicy: OnFailure
+
+# -- Concurrency policy (Allow, Forbid, or Replace)
+concurrencyPolicy: Forbid
+
+# -- Number of successful jobs to retain
+successfulJobsHistoryLimit: 3
+
+# -- Number of failed jobs to retain
+failedJobsHistoryLimit: 1
+
+# -- Optional deadline in seconds for starting the job
+startingDeadlineSeconds: ""
+
+# -- Optional deadline in seconds for the job to complete
+activeDeadlineSeconds: ""
+
+serviceAccount:
+  # -- Whether to create a ServiceAccount
+  create: true
+  # -- ServiceAccount name (defaults to release fullname)
+  name: ""
+  # -- Annotations for the ServiceAccount
+  annotations: {}
+
+configMap:
+  # -- Whether to create a ConfigMap
+  enabled: false
+  # -- ConfigMap data (key-value pairs)
+  data: {}
+
+resources:
+  # -- Resource requests
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  # -- Resource limits
+  limits:
+    cpu: 500m
+    memory: 256Mi
+
+# -- Pod labels (merged with standard labels)
+podLabels: {}
+
+# -- Pod annotations
+podAnnotations: {}
+
+# -- Node selector
+nodeSelector: {}
+
+# -- Tolerations
+tolerations: []
+
+# -- Affinity rules
+affinity: {}
+
+# -- Additional environment variables
+env: []
+#  - name: MY_VAR
+#    value: "my-value"
+
+# -- Additional volume mounts
+volumeMounts: []
+
+# -- Additional volumes
+volumes: []
