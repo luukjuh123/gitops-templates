@@ -10,11 +10,15 @@
 - [ ] Write ServiceAccount template (`charts/app-base/templates/serviceaccount.yaml`)
 - [ ] Create `values.schema.json` for the base chart
 - [x] Add GitHub Actions lint workflow (`.github/workflows/lint.yml`) -- PR #4
+- [ ] Update all 19 galaxy CI workflows to reference gitops-templates reusable workflows (instead of inline checks)
+- [ ] Add Kustomize base as alternative to Helm
 
 ## Priority: Medium
 - [x] Create example consumer values file (`examples/service-values.yaml`) -- PR #5
 - [x] Add kubeval/kubeconform validation to CI workflow
 - [ ] Create Kustomize base as alternative to Helm (`kustomize/base/`)
+- [ ] Add Docker build + push reusable workflow
+- [ ] Add helm-release reusable workflow
 
 ## Priority: Low
 - [x] Add chart versioning and release workflow -- PR #6

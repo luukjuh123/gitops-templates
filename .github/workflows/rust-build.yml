@@ -1,0 +1,21 @@
+# ci-template-version: 1.0
+name: Rust release build
+
+on:
+  workflow_call:
+    inputs:
+      rust-channel:
+        type: string
+        default: stable
+
+jobs:
+  build:
+    name: cargo build --release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: luukjuh123/gitops-templates/.github/actions/setup-rust@main
+        with:
+          rust-channel: ${{ inputs.rust-channel }}
+      - name: cargo build — release
+        run: cargo build --release --all-features

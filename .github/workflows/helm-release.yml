@@ -1,0 +1,30 @@
+# ci-template-version: 1.0
+name: Helm chart release
+
+on:
+  workflow_call:
+    inputs:
+      charts-dir:
+        type: string
+        default: 'charts'
+
+jobs:
+  release:
+    name: chart-releaser
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+      - uses: luukjuh123/gitops-templates/.github/actions/setup-helm@main
+      - uses: helm/chart-releaser-action@v1.6.0
+        with:
+          charts_dir: ${{ inputs.charts-dir }}
+        env:
+          CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}

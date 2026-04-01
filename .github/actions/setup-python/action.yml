@@ -1,0 +1,20 @@
+name: Setup Python with uv
+description: Sets up Python with uv, caches the venv, installs all dev dependencies
+
+inputs:
+  python-version:
+    description: Python version
+    required: false
+    default: '3.12'
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+    - uses: astral-sh/setup-uv@v4
+      with:
+        enable-cache: true
+    - run: uv sync --all-extras --dev
+      shell: bash
