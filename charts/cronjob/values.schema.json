@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["name", "image", "schedule"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Application name used for resource naming",
+      "minLength": 1,
+      "maxLength": 63,
+      "pattern": "^[a-z0-9]([a-z0-9-]*[a-z0-9])?$"
+    },
+    "schedule": {
+      "type": "string",
+      "description": "Cron schedule expression (e.g. '0 * * * *')"
+    },
+    "image": {
+      "type": "object",
+      "required": ["repository", "tag"],
+      "properties": {
+        "repository": {
+          "type": "string",
+          "description": "Container image repository"
+        },
+        "tag": {
+          "type": "string",
+          "description": "Container image tag"
+        },
+        "pullPolicy": {
+          "type": "string",
+          "enum": ["Always", "IfNotPresent", "Never"],
+          "default": "IfNotPresent"
+        }
+      }
+    },
+    "imagePullSecrets": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": []
+    },
+    "restartPolicy": {
+      "type": "string",
+      "enum": ["OnFailure", "Never"],
+      "default": "OnFailure"
+    },
+    "concurrencyPolicy": {
+      "type": "string",
+      "enum": ["Allow", "Forbid", "Replace"],
+      "default": "Forbid"
+    },
+    "successfulJobsHistoryLimit": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 3
+    },
+    "failedJobsHistoryLimit": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 1
+    },
+    "startingDeadlineSeconds": {
+      "type": ["integer", "string"],
+      "minimum": 0,
+      "default": ""
+    },
+    "activeDeadlineSeconds": {
+      "type": ["integer", "string"],
+      "minimum": 0,
+      "default": ""
+    },
+    "serviceAccount": {
+      "type": "object",
+      "properties": {
+        "create": {
+          "type": "boolean",
+          "default": true
+        },
+        "name": {
+          "type": "string",
+          "default": ""
+        },
+        "annotations": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "default": {}
+        }
+      }
+    },
+    "configMap": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "data": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "default": {}
+        }
+      }
+    },
+    "resources": {
+      "type": "object",
+      "properties": {
+        "requests": {
+          "type": "object",
+          "properties": {
+            "cpu": { "type": "string" },
+            "memory": { "type": "string" }
+          }
+        },
+        "limits": {
+          "type": "object",
+          "properties": {
+            "cpu": { "type": "string" },
+            "memory": { "type": "string" }
+          }
+        }
+      }
+    },
+    "podLabels": {
+      "type": "object",
+      "additionalProperties": { "type": "string" },
+      "default": {}
+    },
+    "podAnnotations": {
+      "type": "object",
+      "additionalProperties": { "type": "string" },
+      "default": {}
+    },
+    "nodeSelector": {
+      "type": "object",
+      "additionalProperties": { "type": "string" },
+      "default": {}
+    },
+    "tolerations": {
+      "type": "array",
+      "default": []
+    },
+    "affinity": {
+      "type": "object",
+      "default": {}
+    },
+    "env": {
+      "type": "array",
+      "default": []
+    },
+    "volumeMounts": {
+      "type": "array",
+      "default": []
+    },
+    "volumes": {
+      "type": "array",
+      "default": []
+    }
+  }
+}
