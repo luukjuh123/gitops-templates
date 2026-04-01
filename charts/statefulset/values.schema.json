@@ -40,6 +40,21 @@
       "items": { "type": "string" },
       "default": []
     },
+    "podManagementPolicy": {
+      "type": "string",
+      "enum": ["OrderedReady", "Parallel"],
+      "default": "OrderedReady"
+    },
+    "updateStrategy": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["RollingUpdate", "OnDelete"],
+          "default": "RollingUpdate"
+        }
+      }
+    },
     "serviceAccount": {
       "type": "object",
       "properties": {
@@ -61,15 +76,6 @@
     "service": {
       "type": "object",
       "properties": {
-        "enabled": {
-          "type": "boolean",
-          "default": true
-        },
-        "type": {
-          "type": "string",
-          "enum": ["ClusterIP", "NodePort", "LoadBalancer"],
-          "default": "ClusterIP"
-        },
         "port": {
           "type": "integer",
           "minimum": 1,
@@ -89,80 +95,6 @@
         }
       }
     },
-    "ingress": {
-      "type": "object",
-      "properties": {
-        "enabled": {
-          "type": "boolean",
-          "default": false
-        },
-        "className": {
-          "type": "string",
-          "default": ""
-        },
-        "annotations": {
-          "type": "object",
-          "additionalProperties": { "type": "string" },
-          "default": {}
-        },
-        "host": {
-          "type": "string",
-          "default": ""
-        },
-        "path": {
-          "type": "string",
-          "default": "/"
-        },
-        "pathType": {
-          "type": "string",
-          "enum": ["Prefix", "Exact", "ImplementationSpecific"],
-          "default": "Prefix"
-        },
-        "tls": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "secretName": { "type": "string" },
-              "hosts": {
-                "type": "array",
-                "items": { "type": "string" }
-              }
-            }
-          },
-          "default": []
-        }
-      }
-    },
-    "hpa": {
-      "type": "object",
-      "properties": {
-        "enabled": {
-          "type": "boolean",
-          "default": false
-        },
-        "minReplicas": {
-          "type": "integer",
-          "minimum": 1,
-          "default": 1
-        },
-        "maxReplicas": {
-          "type": "integer",
-          "minimum": 1,
-          "default": 10
-        },
-        "targetCPUUtilizationPercentage": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 100,
-          "default": 80
-        },
-        "targetMemoryUtilizationPercentage": {
-          "type": ["integer", "string"],
-          "default": ""
-        }
-      }
-    },
     "configMap": {
       "type": "object",
       "properties": {
@@ -170,15 +102,32 @@
           "type": "boolean",
           "default": false
         },
-        "annotations": {
-          "type": "object",
-          "additionalProperties": { "type": "string" },
-          "default": {}
-        },
         "data": {
           "type": "object",
           "additionalProperties": { "type": "string" },
           "default": {}
+        }
+      }
+    },
+    "persistence": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "storageClass": {
+          "type": "string",
+          "default": ""
+        },
+        "accessMode": {
+          "type": "string",
+          "enum": ["ReadWriteOnce", "ReadWriteMany", "ReadOnlyMany"],
+          "default": "ReadWriteOnce"
+        },
+        "size": {
+          "type": "string",
+          "default": "1Gi"
         }
       }
     },
