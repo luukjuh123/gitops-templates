@@ -1,0 +1,26 @@
+# Example: How a TypeScript/React/Next.js galaxy's CI uses gitops-templates reusable workflows
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    uses: luukjuh123/gitops-templates/.github/workflows/typescript-quality.yml@main
+    with:
+      node-version: '20'
+
+  test:
+    needs: quality
+    uses: luukjuh123/gitops-templates/.github/workflows/typescript-test.yml@main
+
+  build:
+    needs: test
+    uses: luukjuh123/gitops-templates/.github/workflows/typescript-build.yml@main

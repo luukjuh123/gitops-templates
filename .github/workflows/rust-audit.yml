@@ -1,0 +1,17 @@
+# ci-template-version: 1.0
+name: Rust security audit
+
+on:
+  workflow_call: {}
+  schedule:
+    - cron: '0 6 * * 1'  # Every Monday 06:00 UTC
+
+jobs:
+  audit:
+    name: cargo audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: rustsec/audit-check@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}

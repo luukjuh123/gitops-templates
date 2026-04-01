@@ -1,27 +1,30 @@
 # GitOps Templates
 
-> Reusable Helm charts and Kustomize bases for Kubernetes deployments across all Atlas galaxies.
+> The Atlas DevOps template library — reusable CI/CD workflows, Helm charts, scripts, and tooling configuration for all Atlas galaxies.
 
 ## What this is
 
-A shared library of deployment templates that any galaxy can reference to deploy its workloads on Kubernetes. Instead of each project maintaining its own Deployment/Service/Ingress YAML, galaxies point to this repo and supply only their specific values (image, replicas, resource limits, etc.).
+A shared library of DevOps templates. Galaxies call reusable GitHub Actions workflows directly (updates propagate automatically) and reference Helm charts via Git URL for Kubernetes deployments.
 
 ## Repository structure
 
 ```
+.github/
+  workflows/          # Reusable workflows (on: workflow_call) + this repo's CI
+  actions/            # Composite actions (setup-python, setup-rust, etc.)
+ci/
+  python/             # Standalone CI template Genesis copies into Python galaxies
+  rust/               # Standalone CI template Genesis copies into Rust galaxies
+  typescript/         # Standalone CI template Genesis copies into TS galaxies
 charts/
-  app-base/              # Base Helm chart for standard workloads
-    Chart.yaml
-    values.yaml          # Default values
-    values.schema.json   # JSON Schema for value validation
-    templates/
-      deployment.yaml
-      service.yaml
-      ingress.yaml
-      hpa.yaml
-      configmap.yaml
-      serviceaccount.yaml
-      _helpers.tpl
+  app-base/           # Base Helm chart for standard workloads
+  cronjob/            # Helm chart for CronJob workloads
+  statefulset/        # Helm chart for StatefulSet workloads
+scripts/
+  helm/               # lint-all.sh, package.sh, deploy.sh
+  terraform/          # fmt-check.sh, validate.sh, plan.sh
+  kubernetes/         # kubeconform.sh, rollout-wait.sh
+  docker/             # build.sh, push.sh
 examples/
   service-values.yaml    # Example consumer values file
 .github/
@@ -31,9 +34,57 @@ examples/
 .cr.yaml                 # chart-releaser configuration
 ```
 
-## How other galaxies use this chart
+## GitHub Actions
 
-### Option 1: Helm dependency (recommended)
+### Reusable Workflows
+
+Call these from any galaxy's CI workflow:
+
+```yaml
+jobs:
+  quality:
+    uses: luukjuh123/gitops-templates/.github/workflows/python-quality.yml@main
+    with:
+      python-version: '3.12'
+```
+
+| Workflow file | Stack | Inputs |
+|---------------|-------|--------|
+| `python-quality.yml` | Python | python-version, src-dir |
+| `python-test.yml` | Python | python-version, coverage-threshold |
+| `rust-quality.yml` | Rust | rust-channel |
+| `rust-test.yml` | Rust | rust-channel, all-features |
+| `rust-build.yml` | Rust | rust-channel |
+| `rust-audit.yml` | Rust | — (also runs on schedule) |
+| `typescript-quality.yml` | TypeScript | node-version |
+| `typescript-test.yml` | TypeScript | node-version |
+| `typescript-build.yml` | TypeScript | node-version |
+| `helm-lint.yml` | Helm | charts-dir, kubernetes-version |
+| `helm-release.yml` | Helm | charts-dir |
+| `terraform-validate.yml` | Terraform | terraform-version, working-directory |
+| `docker-build.yml` | Docker | image-name, registry, push |
+
+See `examples/reusable-workflows/` for complete per-stack examples.
+
+### Composite Actions
+
+```yaml
+- uses: luukjuh123/gitops-templates/.github/actions/setup-python@main
+  with:
+    python-version: '3.12'
+```
+
+| Action | Purpose |
+|--------|---------|
+| `setup-python` | Python + uv + `uv sync --all-extras --dev` |
+| `setup-rust` | Rust toolchain + Swatinem/rust-cache |
+| `setup-node` | Node.js + `npm ci` |
+| `setup-helm` | Helm + kubeconform |
+| `setup-terraform` | Terraform + tflint |
+
+## Helm Charts
+
+### How other galaxies use this chart
 
 First add the Helm repository (published automatically to GitHub Pages on every release):
 
@@ -57,7 +108,7 @@ Then create a `values.yaml` that overrides the base:
 app-base:
   name: my-service
   image:
-    repository: ghcr.io/<owner>/my-service
+    repository: ghcr.io/luukjuh123/my-service
     tag: "1.0.0"
   replicas: 3
   service:
@@ -124,16 +175,15 @@ Releases happen automatically:
 helm lint charts/app-base/
 
 # Render templates with example values
-helm template test-release charts/app-base/ -f examples/service-values.yaml
+helm template test-release charts/app-base/ -f examples/helm/service-values.yaml
 
 # Validate rendered output
-helm template test-release charts/app-base/ -f examples/service-values.yaml | kubeval
+helm template test-release charts/app-base/ -f examples/helm/service-values.yaml | kubeconform -strict -summary
 ```
 
 ## Agent team
 
-- **gitops-engineer** -- primary agent, writes and maintains Helm charts and Kustomize bases
-- **qa-reviewer** -- validates templates with helm lint, kubeval, and schema checks
+- **gitops-engineer** — maintains all templates, adds new workflow/chart variants, keeps templates current
 
 ## Atlas constellation
 
