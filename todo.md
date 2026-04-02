@@ -17,7 +17,7 @@
 - [x] Create example consumer values file (`examples/service-values.yaml`) -- PR #5
 - [x] Add kubeval/kubeconform validation to CI workflow
 - [ ] Create Kustomize base as alternative to Helm (`kustomize/base/`)
-- [ ] Add Docker build + push reusable workflow
+- [x] Add Docker build + push reusable workflow
 - [ ] Add helm-release reusable workflow
 
 ## Priority: Low
