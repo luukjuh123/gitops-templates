@@ -1,0 +1,66 @@
+suite: StatefulSet Service template tests
+templates:
+  - templates/service.yaml
+tests:
+  - it: should render a Service by default
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Service
+      - equal:
+          path: apiVersion
+          value: v1
+
+  - it: should use the fullname for metadata.name
+    set:
+      name: my-db
+    asserts:
+      - equal:
+          path: metadata.name
+          value: my-db
+
+  - it: should include standard labels
+    asserts:
+      - isNotEmpty:
+          path: metadata.labels["helm.sh/chart"]
+      - isNotEmpty:
+          path: metadata.labels["app.kubernetes.io/name"]
+
+  - it: should be a headless service (clusterIP None)
+    asserts:
+      - equal:
+          path: spec.clusterIP
+          value: None
+
+  - it: should set the port from service.port
+    set:
+      service.port: 5432
+    asserts:
+      - equal:
+          path: spec.ports[0].port
+          value: 5432
+
+  - it: should set targetPort from service.targetPort
+    set:
+      service.targetPort: 5432
+    asserts:
+      - equal:
+          path: spec.ports[0].targetPort
+          value: 5432
+
+  - it: should set selector labels for the StatefulSet pods
+    asserts:
+      - isNotEmpty:
+          path: spec.selector["app.kubernetes.io/name"]
+      - isNotEmpty:
+          path: spec.selector["app.kubernetes.io/instance"]
+
+  - it: should set service annotations when provided
+    set:
+      service.annotations:
+        service.beta.kubernetes.io/aws-load-balancer-type: nlb
+    asserts:
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-type"]
+          value: nlb
