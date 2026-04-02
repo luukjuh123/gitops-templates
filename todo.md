@@ -18,7 +18,7 @@
 - [x] Add kubeval/kubeconform validation to CI workflow
 - [ ] Create Kustomize base as alternative to Helm (`kustomize/base/`)
 - [ ] Add Docker build + push reusable workflow
-- [ ] Add helm-release reusable workflow
+- [x] Add helm-release reusable workflow -- PR #14
 
 ## Priority: Low
 - [x] Add chart versioning and release workflow -- PR #6
