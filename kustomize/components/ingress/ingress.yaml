@@ -1,0 +1,27 @@
+# Ingress is included as a placeholder. Consumers should either:
+#   a) patch this resource in their overlay, or
+#   b) remove it via a strategic merge patch that sets an empty resource list.
+# By default the host is set to a placeholder value that consumers must override.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app
+  labels:
+    app.kubernetes.io/name: app
+    app.kubernetes.io/component: ingress
+  annotations:
+    # Override in overlay, e.g.:
+    # nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: app.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: app
+                port:
+                  name: http
