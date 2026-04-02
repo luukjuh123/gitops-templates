@@ -4,19 +4,19 @@
 - [x] Create base Helm chart structure (`charts/app-base/Chart.yaml`, `values.yaml`, `_helpers.tpl`) -- PR #8
 - [ ] Write Deployment template (`charts/app-base/templates/deployment.yaml`)
 - [ ] Write Service template (`charts/app-base/templates/service.yaml`)
-- [x] Write Ingress template (`charts/app-base/templates/ingress.yaml`) -- PR #13
-- [x] Write HPA template (`charts/app-base/templates/hpa.yaml`)
+- [ ] Write Ingress template (`charts/app-base/templates/ingress.yaml`)
+- [ ] Write HPA template (`charts/app-base/templates/hpa.yaml`)
 - [x] Write ConfigMap template (`charts/app-base/templates/configmap.yaml`) -- PR #3
-- [x] Write ServiceAccount template (`charts/app-base/templates/serviceaccount.yaml`)
-- [x] Create `values.schema.json` for the base chart
+- [ ] Write ServiceAccount template (`charts/app-base/templates/serviceaccount.yaml`)
+- [ ] Create `values.schema.json` for the base chart
 - [x] Add GitHub Actions lint workflow (`.github/workflows/lint.yml`) -- PR #4
 - [ ] Update all 19 galaxy CI workflows to reference gitops-templates reusable workflows (instead of inline checks)
-- [x] Add Kustomize base as alternative to Helm
+- [ ] Add Kustomize base as alternative to Helm
 
 ## Priority: Medium
 - [x] Create example consumer values file (`examples/service-values.yaml`) -- PR #5
 - [x] Add kubeval/kubeconform validation to CI workflow
-- [x] Create Kustomize base as alternative to Helm (`kustomize/base/`)
+- [ ] Create Kustomize base as alternative to Helm (`kustomize/base/`)
 - [ ] Add Docker build + push reusable workflow
 - [ ] Add helm-release reusable workflow
 

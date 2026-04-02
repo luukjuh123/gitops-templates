@@ -1,0 +1,40 @@
+# ci-template-version: 1.0
+name: Helm lint and validate
+
+on:
+  workflow_call:
+    inputs:
+      charts-dir:
+        description: Directory containing Helm charts
+        type: string
+        default: 'charts'
+      kubernetes-version:
+        description: Target Kubernetes version for kubeconform
+        type: string
+        default: '1.29.0'
+
+jobs:
+  helm-lint:
+    name: helm lint + kubeconform
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: luukjuh123/gitops-templates/.github/actions/setup-helm@main
+        with:
+          kubernetes-version: ${{ inputs.kubernetes-version }}
+      - name: Helm lint — all charts
+        run: |
+          for chart in ${{ inputs.charts-dir }}/*/; do
+            echo "Linting $chart"
+            helm lint "$chart"
+          done
+      - name: Helm template + kubeconform
+        run: |
+          for chart in ${{ inputs.charts-dir }}/*/; do
+            name=$(basename "$chart")
+            echo "Validating $name"
+            helm template "$name" "$chart" | kubeconform \
+              -strict \
+              -kubernetes-version ${{ inputs.kubernetes-version }} \
+              -summary
+          done

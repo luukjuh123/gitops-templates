@@ -1,0 +1,29 @@
+# ci-template-version: 1.0
+# Standalone CI for Rust galaxies.
+# Composes reusable workflows from gitops-templates.
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    uses: luukjuh123/gitops-templates/.github/workflows/rust-quality.yml@main
+
+  test:
+    needs: quality
+    uses: luukjuh123/gitops-templates/.github/workflows/rust-test.yml@main
+
+  audit:
+    uses: luukjuh123/gitops-templates/.github/workflows/rust-audit.yml@main
+
+  build:
+    needs: test
+    uses: luukjuh123/gitops-templates/.github/workflows/rust-build.yml@main
