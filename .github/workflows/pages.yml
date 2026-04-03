@@ -92,7 +92,7 @@ jobs:
 
       - name: Commit and push to gh-pages
         run: |
-          git add index.yaml *.tgz
+          git add index.yaml ./*.tgz
           if git diff --cached --quiet; then
             echo "No changes to publish"
           else
