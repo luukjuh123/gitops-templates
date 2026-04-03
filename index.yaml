@@ -3,9 +3,9 @@ entries:
   app-base:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-04-03T11:28:31.819289509Z"
+    created: "2026-04-03T11:28:38.695953772Z"
     description: Base Helm chart for deploying standard application workloads on Kubernetes
-    digest: c030a1f5a64f6ee5e6e204ad777d1b1f7b030008c5f814132b85d30745c3e5b7
+    digest: 6daba0c08e9cf13876741e9c20b599bc21dc0a1a26fac6e990799f9ff0df2ca5
     keywords:
     - kubernetes
     - deployment
@@ -21,6 +21,24 @@ entries:
     - https://luukjuh123.github.io/gitops-templates/app-base-0.1.0.tgz
     version: 0.1.0
   cronjob:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2026-04-03T11:28:38.696306389Z"
+    description: Helm chart for deploying scheduled CronJob workloads on Kubernetes
+    digest: 4f4e07b0473e0e8bdd01f91203bcb076bb5c8c43629a640f17b70c0b38b29999
+    keywords:
+    - kubernetes
+    - cronjob
+    - batch
+    - scheduled
+    - base-chart
+    maintainers:
+    - name: gitops-engineer
+    name: cronjob
+    type: application
+    urls:
+    - https://luukjuh123.github.io/gitops-templates/cronjob-0.1.2.tgz
+    version: 0.1.2
   - apiVersion: v2
     appVersion: 1.0.0
     created: "2026-04-03T11:28:31.819633222Z"
@@ -42,6 +60,26 @@ entries:
   statefulset:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2026-04-03T11:28:38.696704149Z"
+    description: Helm chart for deploying stateful workloads with persistent storage
+      on Kubernetes
+    digest: 4090baae2b601c4a378d683e2232e8e6c0da5213419465debbe7e83bf5b1348f
+    keywords:
+    - kubernetes
+    - statefulset
+    - stateful
+    - persistent
+    - database
+    - base-chart
+    maintainers:
+    - name: gitops-engineer
+    name: statefulset
+    type: application
+    urls:
+    - https://luukjuh123.github.io/gitops-templates/statefulset-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2026-04-03T11:28:31.819974769Z"
     description: Helm chart for deploying stateful workloads with persistent storage
       on Kubernetes
@@ -60,4 +98,4 @@ entries:
     urls:
     - https://luukjuh123.github.io/gitops-templates/statefulset-0.1.0.tgz
     version: 0.1.0
-generated: "2026-04-03T11:28:31.818716729Z"
+generated: "2026-04-03T11:28:38.695328619Z"
