@@ -1,0 +1,14 @@
+# Example: Terraform validate + plan CI using gitops-templates
+name: Terraform CI
+
+on:
+  pull_request:
+    paths:
+      - '**/*.tf'
+      - '**/*.tfvars'
+
+jobs:
+  validate:
+    uses: luukjuh123/gitops-templates/.github/workflows/terraform-validate.yml@main
+    with:
+      working-directory: .

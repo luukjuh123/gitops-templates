@@ -8,6 +8,72 @@ on:
       - ".github/workflows/lint.yml"
 
 jobs:
+  version-check:
+    name: Verify chart version is bumped
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check each changed chart has a bumped version
+        run: |
+          # Find charts whose non-Chart.yaml files changed on this PR
+          CHANGED_CHARTS=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
+            | grep '^charts/' \
+            | grep -v '/Chart\.yaml$' \
+            | awk -F'/' '{print $1"/"$2}' \
+            | sort -u)
+
+          if [ -z "$CHANGED_CHARTS" ]; then
+            echo "No chart source files changed — version bump not required."
+            exit 0
+          fi
+
+          FAIL=0
+          for chart_dir in $CHANGED_CHARTS; do
+            CHART_YAML="$chart_dir/Chart.yaml"
+            if [ ! -f "$CHART_YAML" ]; then
+              echo "ERROR: $CHART_YAML not found"
+              FAIL=1
+              continue
+            fi
+
+            # Validate version field exists and is non-empty semver
+            VERSION=$(grep '^version:' "$CHART_YAML" | awk '{print $2}')
+            if [ -z "$VERSION" ]; then
+              echo "ERROR: $CHART_YAML is missing a 'version' field"
+              FAIL=1
+              continue
+            fi
+
+            if ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+'; then
+              echo "ERROR: $CHART_YAML version '$VERSION' is not a valid semver (MAJOR.MINOR.PATCH)"
+              FAIL=1
+              continue
+            fi
+
+            # Compare with base branch version — require a bump
+            BASE_VERSION=$(git show origin/${{ github.base_ref }}:"$CHART_YAML" 2>/dev/null \
+              | grep '^version:' | awk '{print $2}')
+
+            if [ -z "$BASE_VERSION" ]; then
+              echo "INFO: $chart_dir is new — no base version to compare."
+            elif [ "$VERSION" = "$BASE_VERSION" ]; then
+              echo "ERROR: $CHART_YAML version '$VERSION' was not bumped (same as base branch)."
+              echo "  Bump the 'version' field in Chart.yaml following semver:"
+              echo "    patch (x.y.Z) for backwards-compatible bug fixes"
+              echo "    minor (x.Y.0) for new backwards-compatible features"
+              echo "    major (X.0.0) for breaking changes"
+              FAIL=1
+            else
+              echo "OK: $chart_dir version $BASE_VERSION -> $VERSION"
+            fi
+          done
+
+          exit $FAIL
+
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -48,6 +114,8 @@ jobs:
         run: |
           mkdir -p /tmp/helm-pkg-test
           helm package charts/app-base/ --destination /tmp/helm-pkg-test
+          helm package charts/cronjob/ --destination /tmp/helm-pkg-test
+          helm package charts/statefulset/ --destination /tmp/helm-pkg-test
           helm repo index /tmp/helm-pkg-test --url https://example.com/charts
           echo "Packaged charts:"
           ls /tmp/helm-pkg-test/

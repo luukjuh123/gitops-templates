@@ -1,0 +1,110 @@
+suite: HPA template tests
+templates:
+  - templates/hpa.yaml
+tests:
+  - it: should not render when hpa.enabled is false (default)
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should render an HPA when hpa.enabled is true
+    set:
+      hpa.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: HorizontalPodAutoscaler
+      - equal:
+          path: apiVersion
+          value: autoscaling/v2
+
+  - it: should use the fullname for metadata.name
+    set:
+      name: my-app
+      hpa.enabled: true
+    asserts:
+      - equal:
+          path: metadata.name
+          value: my-app
+
+  - it: should target the Deployment with the fullname
+    set:
+      name: my-app
+      hpa.enabled: true
+    asserts:
+      - equal:
+          path: spec.scaleTargetRef.apiVersion
+          value: apps/v1
+      - equal:
+          path: spec.scaleTargetRef.kind
+          value: Deployment
+      - equal:
+          path: spec.scaleTargetRef.name
+          value: my-app
+
+  - it: should set minReplicas and maxReplicas from values
+    set:
+      hpa.enabled: true
+      hpa.minReplicas: 2
+      hpa.maxReplicas: 5
+    asserts:
+      - equal:
+          path: spec.minReplicas
+          value: 2
+      - equal:
+          path: spec.maxReplicas
+          value: 5
+
+  - it: should include CPU utilization metric
+    set:
+      hpa.enabled: true
+      hpa.targetCPUUtilizationPercentage: 70
+    asserts:
+      - contains:
+          path: spec.metrics
+          content:
+            type: Resource
+            resource:
+              name: cpu
+              target:
+                type: Utilization
+                averageUtilization: 70
+
+  - it: should not include memory metric when targetMemoryUtilizationPercentage is empty
+    set:
+      hpa.enabled: true
+      hpa.targetMemoryUtilizationPercentage: ""
+    asserts:
+      - lengthEqual:
+          path: spec.metrics
+          count: 1
+
+  - it: should include memory metric when targetMemoryUtilizationPercentage is set
+    set:
+      hpa.enabled: true
+      hpa.targetMemoryUtilizationPercentage: 80
+    asserts:
+      - lengthEqual:
+          path: spec.metrics
+          count: 2
+      - contains:
+          path: spec.metrics
+          content:
+            type: Resource
+            resource:
+              name: memory
+              target:
+                type: Utilization
+                averageUtilization: 80
+
+  - it: should include standard labels
+    set:
+      hpa.enabled: true
+    asserts:
+      - isNotEmpty:
+          path: metadata.labels["helm.sh/chart"]
+      - isNotEmpty:
+          path: metadata.labels["app.kubernetes.io/name"]
+      - isNotEmpty:
+          path: metadata.labels["app.kubernetes.io/instance"]

@@ -74,6 +74,8 @@ hpa:
 configMap:
   # -- Whether to create a ConfigMap
   enabled: false
+  # -- Annotations for the ConfigMap
+  annotations: {}
   # -- ConfigMap data (key-value pairs)
   data: {}
 
