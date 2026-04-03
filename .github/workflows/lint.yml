@@ -23,13 +23,13 @@ jobs:
         run: helm lint charts/app-base/
 
       - name: Helm lint (example values)
-        run: helm lint charts/app-base/ -f examples/service-values.yaml
+        run: helm lint charts/app-base/ -f examples/helm/service-values.yaml
 
       - name: Helm template (default values)
         run: helm template test-release charts/app-base/
 
       - name: Helm template (example values)
-        run: helm template test-release charts/app-base/ -f examples/service-values.yaml
+        run: helm template test-release charts/app-base/ -f examples/helm/service-values.yaml
 
       - name: Install kubeconform
         run: |
@@ -42,7 +42,7 @@ jobs:
 
       - name: Validate with kubeconform (example values)
         run: |
-          helm template test-release charts/app-base/ -f examples/service-values.yaml | kubeconform -strict -summary
+          helm template test-release charts/app-base/ -f examples/helm/service-values.yaml | kubeconform -strict -summary
 
       - name: Verify chart packaging
         run: |
