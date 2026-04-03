@@ -3,9 +3,9 @@ entries:
   app-base:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-04-01T12:05:10.295438782Z"
+    created: "2026-04-03T11:28:31.819289509Z"
     description: Base Helm chart for deploying standard application workloads on Kubernetes
-    digest: 7b09a7f2be6d25d374720dfa9fbd387c90b257a66c74aa9184074cf03539aa06
+    digest: c030a1f5a64f6ee5e6e204ad777d1b1f7b030008c5f814132b85d30745c3e5b7
     keywords:
     - kubernetes
     - deployment
@@ -23,9 +23,9 @@ entries:
   cronjob:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-04-01T12:05:10.295799674Z"
+    created: "2026-04-03T11:28:31.819633222Z"
     description: Helm chart for deploying scheduled CronJob workloads on Kubernetes
-    digest: a9fc7a0b01e840f20c3eb1db535168c2a297f2ea61721eb77824503606313432
+    digest: f701965ce159e9698bfd18db76a8af438cd3581c888d45c27051394c36f482f1
     keywords:
     - kubernetes
     - cronjob
@@ -42,10 +42,10 @@ entries:
   statefulset:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-04-01T12:05:10.29616316Z"
+    created: "2026-04-03T11:28:31.819974769Z"
     description: Helm chart for deploying stateful workloads with persistent storage
       on Kubernetes
-    digest: 2020a37553b16cdc94480fdaa244f8a4833c759922431e456a06220fb3265cca
+    digest: 4cf350adbe2531f3fafd438e8d9b6a09e22b9785e95b646243db822da17b3b99
     keywords:
     - kubernetes
     - statefulset
@@ -60,4 +60,4 @@ entries:
     urls:
     - https://luukjuh123.github.io/gitops-templates/statefulset-0.1.0.tgz
     version: 0.1.0
-generated: "2026-04-01T12:05:10.293957564Z"
+generated: "2026-04-03T11:28:31.818716729Z"
