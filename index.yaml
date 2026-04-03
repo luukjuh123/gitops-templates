@@ -3,6 +3,25 @@ entries:
   app-base:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2026-04-03T11:29:25.337026787Z"
+    description: Base Helm chart for deploying standard application workloads on Kubernetes
+    digest: cf1166b4a450416932fa248401fbd5a9ad8df13696ecdd9dae7c27e5a57de3ab
+    keywords:
+    - kubernetes
+    - deployment
+    - service
+    - ingress
+    - hpa
+    - base-chart
+    maintainers:
+    - name: gitops-engineer
+    name: app-base
+    type: application
+    urls:
+    - https://github.com/luukjuh123/gitops-templates/releases/download/app-base-0.1.4/app-base-0.1.4.tgz
+    version: 0.1.4
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2026-04-03T11:28:51.24693309Z"
     description: Base Helm chart for deploying standard application workloads on Kubernetes
     digest: 0248bd31b5a076ce3008a473a501864fdb63f422cef8575e765f9d409657b377
@@ -117,4 +136,4 @@ entries:
     urls:
     - https://luukjuh123.github.io/gitops-templates/statefulset-0.1.0.tgz
     version: 0.1.0
-generated: "2026-04-03T11:28:51.246207641Z"
+generated: "2026-04-03T11:29:25.337043047Z"
