@@ -1,0 +1,20 @@
+# Safety policy — maintained by PR Sentinel
+# https://docs.safetycli.com/safety-docs/safety-policy-files
+
+version: "3.0"
+scanning-settings:
+  max-depth: 6
+
+alert:
+  security-updates-only: false
+
+security-updates-only: false
+
+ignore-cvss-unknown-severity: false
+ignore-cvss-severity-below: 0  # fail on any known CVE
+
+# Add known false positives here with justification:
+# ignore-vulnerabilities:
+#   12345:
+#     reason: "Not applicable — we don't use the affected code path"
+#     expires: "2026-12-31"

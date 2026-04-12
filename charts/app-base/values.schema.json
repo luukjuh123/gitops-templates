@@ -211,6 +211,11 @@
           "description": "Whether to create a ConfigMap.",
           "default": false
         },
+        "annotations": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "default": {}
+        },
         "data": {
           "type": "object",
           "description": "Key-value pairs to store in the ConfigMap.",

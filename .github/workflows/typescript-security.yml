@@ -1,0 +1,40 @@
+# ci-template-version: 1.0
+name: TypeScript security scan
+
+on:
+  workflow_call: {}
+
+jobs:
+  npm-audit:
+    name: npm audit (dependency CVEs)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Audit for high/critical CVEs
+        run: npm audit --audit-level=high
+
+  license-check:
+    name: license checker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Install license-checker
+        run: npm install -g license-checker
+      - name: Check for prohibited licenses
+        run: |
+          license-checker \
+            --excludePrivatePackages \
+            --failOn "GPL-2.0;GPL-3.0;AGPL-1.0;AGPL-3.0;LGPL-2.0;LGPL-2.1;LGPL-3.0" \
+            --summary

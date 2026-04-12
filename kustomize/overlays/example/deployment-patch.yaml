@@ -1,0 +1,19 @@
+# Strategic merge patch: override image, replicas, and resource limits
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+spec:
+  replicas: 3
+  template:
+    spec:
+      containers:
+        - name: app
+          image: ghcr.io/my-org/my-service:v1.2.3
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 512Mi

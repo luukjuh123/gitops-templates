@@ -1,0 +1,26 @@
+# ci-template-version: 1.0
+name: TypeScript tests
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        type: string
+        default: '20'
+
+jobs:
+  test:
+    name: vitest + coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: luukjuh123/gitops-templates/.github/actions/setup-node@main
+        with:
+          node-version: ${{ inputs.node-version }}
+      - name: Run vitest
+        run: npm run test -- --coverage --reporter=verbose
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        if: always()
+        with:
+          fail_ci_if_error: false
