@@ -1,40 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app-name
+  name: app
   labels:
-    app.kubernetes.io/name: app-name
+    app.kubernetes.io/name: app
+    app.kubernetes.io/component: server
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: app-name
+      app.kubernetes.io/name: app
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: app-name
+        app.kubernetes.io/name: app
+        app.kubernetes.io/component: server
     spec:
-      serviceAccountName: app-name
+      serviceAccountName: app
       containers:
-        - name: app-name
-          image: app-name:latest
-          imagePullPolicy: IfNotPresent
+        - name: app
+          image: nginx:latest
           ports:
             - name: http
-              containerPort: 8080
+              containerPort: 80
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /healthz
-              port: 8080
-            initialDelaySeconds: 10
-            periodSeconds: 15
-          readinessProbe:
-            httpGet:
-              path: /healthz
-              port: 8080
-            initialDelaySeconds: 5
-            periodSeconds: 10
           resources:
             requests:
               cpu: 100m

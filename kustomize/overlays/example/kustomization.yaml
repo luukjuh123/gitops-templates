@@ -2,17 +2,11 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ../../base
-namePrefix: my-service-
-namespace: my-namespace
+namePrefix: myapp-
 images:
-  - name: app-name
-    newName: my-registry/my-service
-    newTag: v1.2.3
-patches:
-  - patch: |-
-      - op: replace
-        path: /spec/replicas
-        value: 2
-    target:
-      kind: Deployment
-      name: app-name
+  - name: nginx
+    newName: myrepo/myapp
+    newTag: "1.0.0"
+replicas:
+  - name: app
+    count: 2
