@@ -12,8 +12,8 @@
 - [ ] Write Service template (`charts/app-base/templates/service.yaml`)
 - [x] Write Ingress template (`charts/app-base/templates/ingress.yaml`) -- PR
 - [ ] Write HPA template (`charts/app-base/templates/hpa.yaml`)
-- [ ] Write ConfigMap template (`charts/app-base/templates/configmap.yaml`)
-- [ ] Write ServiceAccount template (`charts/app-base/templates/serviceaccount.yaml`)
+- [x] Write ConfigMap template (`charts/app-base/templates/configmap.yaml`) -- PR #3
+- [x] Write ServiceAccount template (`charts/app-base/templates/serviceaccount.yaml`) -- PR #4
 - [ ] Create `values.schema.json` for the base chart
 - [x] Add GitHub Actions lint workflow (`.github/workflows/lint.yml`) -- PR #4
 - [ ] Update all 19 galaxy CI workflows to reference gitops-templates reusable workflows (instead of inline checks)
