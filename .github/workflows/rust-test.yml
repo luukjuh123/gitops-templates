@@ -1,0 +1,29 @@
+# ci-template-version: 1.0
+name: Rust tests
+
+on:
+  workflow_call:
+    inputs:
+      rust-channel:
+        description: Rust toolchain channel
+        type: string
+        default: stable
+      all-features:
+        description: Run with all features enabled
+        type: boolean
+        default: true
+
+jobs:
+  test:
+    name: cargo nextest + doc tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: luukjuh123/gitops-templates/.github/actions/setup-rust@main
+        with:
+          rust-channel: ${{ inputs.rust-channel }}
+      - uses: taiki-e/install-action@nextest
+      - name: cargo nextest
+        run: cargo nextest run ${{ inputs.all-features && '--all-features' || '' }}
+      - name: cargo test — doc tests
+        run: cargo test --doc ${{ inputs.all-features && '--all-features' || '' }}

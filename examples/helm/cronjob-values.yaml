@@ -1,0 +1,47 @@
+# Example consumer values for the cronjob chart
+# This demonstrates a database backup job running nightly
+
+name: db-backup
+
+schedule: "0 2 * * *"  # 2 AM daily
+concurrencyPolicy: Forbid
+restartPolicy: OnFailure
+successfulJobsHistoryLimit: 3
+failedJobsHistoryLimit: 1
+activeDeadlineSeconds: 3600  # 1 hour timeout
+
+image:
+  repository: myregistry/db-backup
+  tag: "1.2.0"
+  pullPolicy: IfNotPresent
+
+serviceAccount:
+  create: true
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::123456789012:role/db-backup-role
+
+configMap:
+  enabled: true
+  data:
+    BACKUP_BUCKET: my-backup-bucket
+    BACKUP_RETENTION_DAYS: "7"
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+env:
+  - name: DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: db-secret
+        key: password
+  - name: BACKUP_BUCKET
+    valueFrom:
+      configMapKeyRef:
+        name: db-backup
+        key: BACKUP_BUCKET

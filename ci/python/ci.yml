@@ -1,0 +1,27 @@
+# ci-template-version: 1.0
+# Standalone CI for Python galaxies.
+# Composes reusable workflows from gitops-templates.
+# Reference: https://github.com/luukjuh123/gitops-templates
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    uses: luukjuh123/gitops-templates/.github/workflows/python-quality.yml@main
+    with:
+      python-version: '3.12'
+
+  test:
+    needs: quality
+    uses: luukjuh123/gitops-templates/.github/workflows/python-test.yml@main
+    with:
+      coverage-threshold: 80

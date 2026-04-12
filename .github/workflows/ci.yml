@@ -1,0 +1,26 @@
+# ci-template-version: 1.0
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  helm-lint:
+    uses: luukjuh123/gitops-templates/.github/workflows/helm-lint.yml@main
+    with:
+      charts-dir: charts
+
+  validate-actions:
+    name: Validate GitHub Actions YAML
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: actionlint — validate workflow YAML
+        uses: rhysd/actionlint@v1.7.12
