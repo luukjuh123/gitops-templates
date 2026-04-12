@@ -1,0 +1,21 @@
+# ci-template-version: 1.0
+name: TypeScript build
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        type: string
+        default: '20'
+
+jobs:
+  build:
+    name: npm run build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: luukjuh123/gitops-templates/.github/actions/setup-node@main
+        with:
+          node-version: ${{ inputs.node-version }}
+      - name: Build
+        run: npm run build

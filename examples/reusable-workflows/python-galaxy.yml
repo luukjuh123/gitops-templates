@@ -1,0 +1,27 @@
+# Example: How a Python galaxy's CI uses gitops-templates reusable workflows
+# Copy this to .github/workflows/ci.yml in your Python galaxy
+# Full docs: https://github.com/luukjuh123/gitops-templates
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    uses: luukjuh123/gitops-templates/.github/workflows/python-quality.yml@main
+    with:
+      python-version: '3.12'
+      src-dir: src           # override if your source is not in src/
+
+  test:
+    needs: quality
+    uses: luukjuh123/gitops-templates/.github/workflows/python-test.yml@main
+    with:
+      coverage-threshold: 80

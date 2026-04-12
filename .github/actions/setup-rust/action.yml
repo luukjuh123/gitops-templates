@@ -1,0 +1,21 @@
+name: Setup Rust toolchain
+description: Installs Rust toolchain with caching via Swatinem/rust-cache
+
+inputs:
+  rust-channel:
+    description: Rust channel (stable, beta, nightly)
+    required: false
+    default: stable
+  components:
+    description: Comma-separated list of components (e.g. rustfmt,clippy)
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - uses: dtolnay/rust-toolchain@master
+      with:
+        toolchain: ${{ inputs.rust-channel }}
+        components: ${{ inputs.components }}
+    - uses: Swatinem/rust-cache@v2

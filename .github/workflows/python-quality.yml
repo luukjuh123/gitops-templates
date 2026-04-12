@@ -1,0 +1,38 @@
+# ci-template-version: 1.0
+name: Python quality checks
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        description: Python version
+        type: string
+        default: '3.12'
+      src-dir:
+        description: Source directory for type checking and linting
+        type: string
+        default: 'src'
+
+jobs:
+  quality:
+    name: Quality (ruff · ty · bandit · safety · codespell)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: luukjuh123/gitops-templates/.github/actions/setup-python@main
+        with:
+          python-version: ${{ inputs.python-version }}
+      - name: Ruff — lint
+        run: uv run ruff check . --output-format=github
+      - name: Ruff — format check
+        run: uv run ruff format --check .
+      - name: ty — type check
+        run: uv run ty check ${{ inputs.src-dir }}/
+      - name: Bandit — security scan
+        run: uv run bandit -r ${{ inputs.src-dir }}/ -c pyproject.toml -f github
+      - name: Safety — dependency CVE check
+        run: uv run safety scan --policy-file .safety-policy.yml || true
+      - name: Codespell — spell check
+        run: uv run codespell ${{ inputs.src-dir }}/ tests/ --skip="*.lock,*.json"
+      - name: Pre-commit — all hooks
+        uses: pre-commit/action@v3.0.1
