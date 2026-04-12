@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  labels:
+    app.kubernetes.io/name: app
+    app.kubernetes.io/component: config
+data:
+  # Override these keys in your overlay patch
+  APP_ENV: production

@@ -1,0 +1,32 @@
+# ci-template-version: 1.0
+name: TypeScript quality checks
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: Node.js version
+        type: string
+        default: '20'
+
+jobs:
+  quality:
+    name: Quality (eslint · prettier · tsc · npm-audit · codespell)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: luukjuh123/gitops-templates/.github/actions/setup-node@main
+        with:
+          node-version: ${{ inputs.node-version }}
+      - name: ESLint — lint
+        run: npm run lint
+      - name: Prettier — format check
+        run: npx prettier --check "src/**/*.{ts,tsx,js,jsx,json,css,md}"
+      - name: TypeScript — type check
+        run: npm run type-check
+      - name: npm audit — dependency security
+        run: npm audit --audit-level=high
+      - name: Codespell — spell check
+        uses: codespell-project/actions-codespell@v2
+        with:
+          skip: "*.lock,node_modules,.next"

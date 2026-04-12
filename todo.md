@@ -6,19 +6,21 @@
 - [ ] Write Service template (`charts/app-base/templates/service.yaml`)
 - [ ] Write Ingress template (`charts/app-base/templates/ingress.yaml`)
 - [ ] Write HPA template (`charts/app-base/templates/hpa.yaml`)
-- [ ] Write ConfigMap template (`charts/app-base/templates/configmap.yaml`)
+- [x] Write ConfigMap template (`charts/app-base/templates/configmap.yaml`) -- PR #3
 - [ ] Write ServiceAccount template (`charts/app-base/templates/serviceaccount.yaml`)
-- [ ] Create `values.schema.json` for the base chart
-- [x] Add GitHub Actions lint workflow (`.github/workflows/lint.yml`) -- PR #4
+- [x] Create `values.schema.json` for the base chart -- PR #5
+- [ ] Add GitHub Actions lint workflow (`.github/workflows/lint.yml`)
 
 ## Priority: Medium
 - [x] Create example consumer values file (`examples/service-values.yaml`) -- PR #5
 - [x] Add kubeval/kubeconform validation to CI workflow
 - [ ] Create Kustomize base as alternative to Helm (`kustomize/base/`)
+- [ ] Add Docker build + push reusable workflow
+- [x] Add helm-release reusable workflow -- PR #14
 
 ## Priority: Low
 - [x] Add chart versioning and release workflow -- PR #6
-- [ ] Create additional chart variants (CronJob, StatefulSet)
+- [x] Create additional chart variants (CronJob, StatefulSet) -- PR #15
 - [x] Add Helm chart repository index for proper `helm repo add` support -- PR #7
 
 ## Completed

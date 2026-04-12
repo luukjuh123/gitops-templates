@@ -1,0 +1,35 @@
+# ci-template-version: 1.0
+name: Terraform validate
+
+on:
+  workflow_call:
+    inputs:
+      terraform-version:
+        type: string
+        default: '1.7.0'
+      working-directory:
+        type: string
+        default: '.'
+
+jobs:
+  validate:
+    name: terraform fmt + validate + tfsec
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: luukjuh123/gitops-templates/.github/actions/setup-terraform@main
+        with:
+          terraform-version: ${{ inputs.terraform-version }}
+      - name: terraform fmt — format check
+        run: terraform fmt -check -recursive
+      - name: terraform init
+        run: terraform init -backend=false
+      - name: terraform validate
+        run: terraform validate
+      - name: tfsec — security scan
+        uses: aquasecurity/tfsec-action@v1.0.0
+        with:
+          working_directory: ${{ inputs.working-directory }}

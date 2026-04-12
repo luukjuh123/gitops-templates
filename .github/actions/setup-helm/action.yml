@@ -1,0 +1,30 @@
+name: Setup Helm + kubeconform
+description: Installs Helm and kubeconform for chart linting and Kubernetes manifest validation
+
+inputs:
+  helm-version:
+    description: Helm version
+    required: false
+    default: v3.14.0
+  kubernetes-version:
+    description: Kubernetes schema version for kubeconform
+    required: false
+    default: '1.29.0'
+  kubeconform-version:
+    description: kubeconform version
+    required: false
+    default: v0.6.4
+
+runs:
+  using: composite
+  steps:
+    - uses: azure/setup-helm@v4
+      with:
+        version: ${{ inputs.helm-version }}
+    - name: Install kubeconform
+      shell: bash
+      run: |
+        curl -sLo /tmp/kubeconform.tar.gz \
+          "https://github.com/yannh/kubeconform/releases/download/${{ inputs.kubeconform-version }}/kubeconform-linux-amd64.tar.gz"
+        tar -xzf /tmp/kubeconform.tar.gz -C /usr/local/bin kubeconform
+        chmod +x /usr/local/bin/kubeconform

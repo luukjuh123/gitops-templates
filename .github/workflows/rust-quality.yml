@@ -1,0 +1,35 @@
+# ci-template-version: 1.0
+name: Rust quality checks
+
+on:
+  workflow_call:
+    inputs:
+      rust-channel:
+        description: Rust toolchain channel
+        type: string
+        default: stable
+
+jobs:
+  quality:
+    name: Quality (fmt · clippy · deny · codespell)
+    runs-on: ubuntu-latest
+    env:
+      RUSTFLAGS: "-D warnings"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: luukjuh123/gitops-templates/.github/actions/setup-rust@main
+        with:
+          rust-channel: ${{ inputs.rust-channel }}
+          components: rustfmt,clippy
+      - name: cargo fmt — format check
+        run: cargo fmt --all -- --check
+      - name: cargo clippy — lint
+        run: cargo clippy --all-targets --all-features -- -D warnings
+      - name: cargo deny — license + CVE + duplicates
+        uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          command: check all
+      - name: Codespell — spell check
+        uses: codespell-project/actions-codespell@v2
+        with:
+          skip: "*.lock,target/"
