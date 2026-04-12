@@ -4,9 +4,9 @@
 - [x] Create base Helm chart structure (`charts/app-base/Chart.yaml`, `values.yaml`, `_helpers.tpl`) -- PR #8
 - [x] Write Deployment template (`charts/app-base/templates/deployment.yaml`)
 - [ ] Write Service template (`charts/app-base/templates/service.yaml`)
-- [ ] Write Ingress template (`charts/app-base/templates/ingress.yaml`)
-- [x] Write HPA template (`charts/app-base/templates/hpa.yaml`) -- PR #TBD
-- [x] Write ConfigMap template (`charts/app-base/templates/configmap.yaml`) -- PR #3
+- [x] Write Ingress template (`charts/app-base/templates/ingress.yaml`) -- PR
+- [ ] Write HPA template (`charts/app-base/templates/hpa.yaml`)
+- [ ] Write ConfigMap template (`charts/app-base/templates/configmap.yaml`)
 - [ ] Write ServiceAccount template (`charts/app-base/templates/serviceaccount.yaml`)
 - [x] Create `values.schema.json` for the base chart -- PR #5
 - [ ] Add GitHub Actions lint workflow (`.github/workflows/lint.yml`)
