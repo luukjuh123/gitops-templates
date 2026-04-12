@@ -12,8 +12,8 @@
 - [ ] Add GitHub Actions lint workflow (`.github/workflows/lint.yml`)
 
 ## Priority: Medium
-- [x] Create example consumer values file (`examples/service-values.yaml`) -- PR #5
-- [x] Add kubeval/kubeconform validation to CI workflow
+- [x] Create example consumer values file (`examples/service-values.yaml`)
+- [ ] Add kubeval/kubeconform validation to CI workflow
 - [ ] Create Kustomize base as alternative to Helm (`kustomize/base/`)
 - [x] Add Docker build + push reusable workflow
 - [ ] Add helm-release reusable workflow
