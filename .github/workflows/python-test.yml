@@ -1,0 +1,38 @@
+# ci-template-version: 1.0
+name: Python tests
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        description: Python version
+        type: string
+        default: '3.12'
+      coverage-threshold:
+        description: Minimum coverage percentage
+        type: number
+        default: 80
+
+jobs:
+  test:
+    name: pytest + coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: luukjuh123/gitops-templates/.github/actions/setup-python@main
+        with:
+          python-version: ${{ inputs.python-version }}
+      - name: Run pytest
+        run: |
+          uv run pytest \
+            --cov=src \
+            --cov-report=xml \
+            --cov-report=term-missing \
+            --cov-fail-under=${{ inputs.coverage-threshold }} \
+            -v
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        if: always()
+        with:
+          files: coverage.xml
+          fail_ci_if_error: false

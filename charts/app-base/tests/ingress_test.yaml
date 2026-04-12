@@ -1,0 +1,164 @@
+suite: Ingress template tests
+templates:
+  - templates/ingress.yaml
+tests:
+  - it: should not render when ingress.enabled is false
+    set:
+      ingress.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should render an Ingress when enabled
+    set:
+      ingress.enabled: true
+      ingress.host: myapp.example.com
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Ingress
+      - equal:
+          path: apiVersion
+          value: networking.k8s.io/v1
+
+  - it: should use the name for metadata.name
+    set:
+      name: my-app
+      ingress.enabled: true
+      ingress.host: my-app.example.com
+    asserts:
+      - equal:
+          path: metadata.name
+          value: my-app
+
+  - it: should include standard labels
+    set:
+      ingress.enabled: true
+      ingress.host: myapp.example.com
+    asserts:
+      - isNotEmpty:
+          path: metadata.labels["helm.sh/chart"]
+      - isNotEmpty:
+          path: metadata.labels["app.kubernetes.io/name"]
+      - isNotEmpty:
+          path: metadata.labels["app.kubernetes.io/instance"]
+
+  - it: should include annotations when provided
+    set:
+      ingress.enabled: true
+      ingress.host: myapp.example.com
+      ingress.annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /
+    asserts:
+      - equal:
+          path: metadata.annotations["nginx.ingress.kubernetes.io/rewrite-target"]
+          value: /
+
+  - it: should not include annotations when empty
+    set:
+      ingress.enabled: true
+      ingress.host: myapp.example.com
+      ingress.annotations: {}
+    asserts:
+      - notExists:
+          path: metadata.annotations
+
+  - it: should set ingressClassName when provided
+    set:
+      ingress.enabled: true
+      ingress.host: myapp.example.com
+      ingress.className: nginx
+    asserts:
+      - equal:
+          path: spec.ingressClassName
+          value: nginx
+
+  - it: should not set ingressClassName when empty
+    set:
+      ingress.enabled: true
+      ingress.host: myapp.example.com
+      ingress.className: ""
+    asserts:
+      - notExists:
+          path: spec.ingressClassName
+
+  - it: should set host in rules
+    set:
+      ingress.enabled: true
+      ingress.host: myapp.example.com
+    asserts:
+      - equal:
+          path: spec.rules[0].host
+          value: myapp.example.com
+
+  - it: should set path and pathType from values
+    set:
+      ingress.enabled: true
+      ingress.host: myapp.example.com
+      ingress.path: /api
+      ingress.pathType: ImplementationSpecific
+    asserts:
+      - equal:
+          path: spec.rules[0].http.paths[0].path
+          value: /api
+      - equal:
+          path: spec.rules[0].http.paths[0].pathType
+          value: ImplementationSpecific
+
+  - it: should default path to / and pathType to Prefix
+    set:
+      ingress.enabled: true
+      ingress.host: myapp.example.com
+    asserts:
+      - equal:
+          path: spec.rules[0].http.paths[0].path
+          value: /
+      - equal:
+          path: spec.rules[0].http.paths[0].pathType
+          value: Prefix
+
+  - it: should set backend service name to fullname
+    set:
+      name: my-app
+      ingress.enabled: true
+      ingress.host: my-app.example.com
+    asserts:
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.name
+          value: my-app
+
+  - it: should set backend service port from service.port
+    set:
+      ingress.enabled: true
+      ingress.host: myapp.example.com
+      service.port: 8080
+    asserts:
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.port.number
+          value: 8080
+
+  - it: should render TLS section when configured
+    set:
+      ingress.enabled: true
+      ingress.host: myapp.example.com
+      ingress.tls:
+        - secretName: myapp-tls
+          hosts:
+            - myapp.example.com
+    asserts:
+      - equal:
+          path: spec.tls[0].secretName
+          value: myapp-tls
+      - equal:
+          path: spec.tls[0].hosts[0]
+          value: myapp.example.com
+
+  - it: should not render TLS section when not configured
+    set:
+      ingress.enabled: true
+      ingress.host: myapp.example.com
+      ingress.tls: []
+    asserts:
+      - notExists:
+          path: spec.tls
