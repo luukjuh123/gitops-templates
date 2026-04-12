@@ -5,7 +5,7 @@
 - [x] Write Deployment template (`charts/app-base/templates/deployment.yaml`)
 - [ ] Write Service template (`charts/app-base/templates/service.yaml`)
 - [ ] Write Ingress template (`charts/app-base/templates/ingress.yaml`)
-- [ ] Write HPA template (`charts/app-base/templates/hpa.yaml`)
+- [x] Write HPA template (`charts/app-base/templates/hpa.yaml`) -- PR #TBD
 - [x] Write ConfigMap template (`charts/app-base/templates/configmap.yaml`) -- PR #3
 - [ ] Write ServiceAccount template (`charts/app-base/templates/serviceaccount.yaml`)
 - [x] Create `values.schema.json` for the base chart -- PR #5
