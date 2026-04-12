@@ -1,0 +1,23 @@
+# Strategic merge patch: set the real hostname and TLS secret
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  tls:
+    - hosts:
+        - my-service.example.com
+      secretName: my-service-tls
+  rules:
+    - host: my-service.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: app
+                port:
+                  name: http

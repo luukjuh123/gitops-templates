@@ -16,5 +16,8 @@ runs:
     - uses: astral-sh/setup-uv@v4
       with:
         enable-cache: true
+        cache-dependency-glob: |
+          **/pyproject.toml
+          **/uv.lock
     - run: uv sync --all-extras --dev
       shell: bash
