@@ -1,0 +1,194 @@
+suite: values.schema.json validation tests
+templates:
+  - templates/deployment.yaml
+
+tests:
+  # Valid inputs -- schema must accept all of these
+
+  - it: should render with minimal required values
+    set:
+      name: my-app
+      replicas: 1
+      image.repository: nginx
+      image.tag: "1.25"
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Deployment
+
+  - it: should render with image.pullPolicy Always
+    set:
+      name: my-app
+      replicas: 1
+      image.repository: nginx
+      image.tag: "1.25"
+      image.pullPolicy: Always
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should render with image.pullPolicy Never
+    set:
+      name: my-app
+      replicas: 1
+      image.repository: nginx
+      image.tag: "1.25"
+      image.pullPolicy: Never
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should render with service type NodePort
+    set:
+      name: my-app
+      replicas: 1
+      image.repository: nginx
+      image.tag: "1.25"
+      service.type: NodePort
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should render with service type LoadBalancer
+    set:
+      name: my-app
+      replicas: 1
+      image.repository: nginx
+      image.tag: "1.25"
+      service.type: LoadBalancer
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should render with hpa enabled and valid settings
+    set:
+      name: my-app
+      replicas: 1
+      image.repository: nginx
+      image.tag: "1.25"
+      hpa.enabled: true
+      hpa.minReplicas: 2
+      hpa.maxReplicas: 5
+      hpa.targetCPUUtilizationPercentage: 75
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should render with ingress.pathType Exact
+    set:
+      name: my-app
+      replicas: 1
+      image.repository: nginx
+      image.tag: "1.25"
+      ingress.enabled: true
+      ingress.host: example.com
+      ingress.pathType: Exact
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should render with ingress.pathType ImplementationSpecific
+    set:
+      name: my-app
+      replicas: 1
+      image.repository: nginx
+      image.tag: "1.25"
+      ingress.enabled: true
+      ingress.host: example.com
+      ingress.pathType: ImplementationSpecific
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should render with serviceAccount disabled
+    set:
+      name: my-app
+      replicas: 1
+      image.repository: nginx
+      image.tag: "1.25"
+      serviceAccount.create: false
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should render with zero replicas (scale-to-zero allowed)
+    set:
+      name: my-app
+      replicas: 0
+      image.repository: nginx
+      image.tag: "1.25"
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should render with configMap enabled
+    set:
+      name: my-app
+      replicas: 1
+      image.repository: nginx
+      image.tag: "1.25"
+      configMap.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should render with service port at maximum boundary (65535)
+    set:
+      name: my-app
+      replicas: 1
+      image.repository: nginx
+      image.tag: "1.25"
+      service.port: 65535
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should render with service port at minimum boundary (1)
+    set:
+      name: my-app
+      replicas: 1
+      image.repository: nginx
+      image.tag: "1.25"
+      service.port: 1
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should render with hpa CPU utilization at maximum boundary (100)
+    set:
+      name: my-app
+      replicas: 1
+      image.repository: nginx
+      image.tag: "1.25"
+      hpa.enabled: true
+      hpa.targetCPUUtilizationPercentage: 100
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should render with all optional features enabled
+    set:
+      name: my-app
+      replicas: 3
+      image.repository: registry.example.com/myapp
+      image.tag: "v2.0.0"
+      image.pullPolicy: Always
+      serviceAccount.create: true
+      serviceAccount.name: custom-sa
+      service.enabled: true
+      service.type: ClusterIP
+      service.port: 8080
+      service.targetPort: 8080
+      ingress.enabled: true
+      ingress.host: myapp.example.com
+      ingress.path: /
+      ingress.pathType: Prefix
+      hpa.enabled: true
+      hpa.minReplicas: 2
+      hpa.maxReplicas: 10
+      hpa.targetCPUUtilizationPercentage: 80
+      configMap.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1

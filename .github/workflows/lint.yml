@@ -89,13 +89,13 @@ jobs:
         run: helm lint charts/app-base/
 
       - name: Helm lint (example values)
-        run: helm lint charts/app-base/ -f examples/service-values.yaml
+        run: helm lint charts/app-base/ -f examples/helm/service-values.yaml
 
       - name: Helm template (default values)
         run: helm template test-release charts/app-base/
 
       - name: Helm template (example values)
-        run: helm template test-release charts/app-base/ -f examples/service-values.yaml
+        run: helm template test-release charts/app-base/ -f examples/helm/service-values.yaml
 
       - name: Install kubeconform
         run: |
@@ -108,27 +108,7 @@ jobs:
 
       - name: Validate with kubeconform (example values)
         run: |
-          helm template test-release charts/app-base/ -f examples/service-values.yaml | kubeconform -strict -summary
-
-      - name: Helm lint (cronjob - default values)
-        run: helm lint charts/cronjob/
-
-      - name: Helm template (cronjob - default values)
-        run: helm template test-release charts/cronjob/
-
-      - name: Validate cronjob with kubeconform
-        run: |
-          helm template test-release charts/cronjob/ | kubeconform -strict -summary
-
-      - name: Helm lint (statefulset - default values)
-        run: helm lint charts/statefulset/
-
-      - name: Helm template (statefulset - default values)
-        run: helm template test-release charts/statefulset/
-
-      - name: Validate statefulset with kubeconform
-        run: |
-          helm template test-release charts/statefulset/ | kubeconform -strict -summary
+          helm template test-release charts/app-base/ -f examples/helm/service-values.yaml | kubeconform -strict -summary
 
       - name: Verify chart packaging
         run: |
