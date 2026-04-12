@@ -1,35 +1,39 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
+  "additionalProperties": false,
   "required": ["name", "image", "replicas"],
   "properties": {
     "name": {
       "type": "string",
-      "description": "Application name used for resource naming",
+      "description": "Application name used for Kubernetes resource naming. Must be lowercase alphanumeric with optional hyphens.",
       "minLength": 1,
       "maxLength": 63,
       "pattern": "^[a-z0-9]([a-z0-9-]*[a-z0-9])?$"
     },
     "replicas": {
       "type": "integer",
-      "description": "Number of pod replicas",
+      "description": "Number of pod replicas to run. Set to 0 to scale to zero.",
       "minimum": 0,
       "default": 1
     },
     "image": {
       "type": "object",
+      "description": "Container image configuration.",
+      "additionalProperties": false,
       "required": ["repository", "tag"],
       "properties": {
         "repository": {
           "type": "string",
-          "description": "Container image repository"
+          "description": "Container image repository (e.g. nginx or registry.example.com/myapp)."
         },
         "tag": {
           "type": "string",
-          "description": "Container image tag"
+          "description": "Container image tag (e.g. latest, 1.25, v2.0.0)."
         },
         "pullPolicy": {
           "type": "string",
+          "description": "Image pull policy for the container.",
           "enum": ["Always", "IfNotPresent", "Never"],
           "default": "IfNotPresent"
         }
@@ -37,22 +41,28 @@
     },
     "imagePullSecrets": {
       "type": "array",
+      "description": "List of image pull secret names for private registries.",
       "items": { "type": "string" },
       "default": []
     },
     "serviceAccount": {
       "type": "object",
+      "description": "Kubernetes ServiceAccount configuration.",
+      "additionalProperties": false,
       "properties": {
         "create": {
           "type": "boolean",
+          "description": "Whether to create a ServiceAccount for the deployment.",
           "default": true
         },
         "name": {
           "type": "string",
+          "description": "Name of the ServiceAccount. Defaults to the release fullname when empty.",
           "default": ""
         },
         "annotations": {
           "type": "object",
+          "description": "Annotations to add to the ServiceAccount (e.g. IAM role ARN for IRSA).",
           "additionalProperties": { "type": "string" },
           "default": {}
         }
@@ -60,30 +70,37 @@
     },
     "service": {
       "type": "object",
+      "description": "Kubernetes Service configuration.",
+      "additionalProperties": false,
       "properties": {
         "enabled": {
           "type": "boolean",
+          "description": "Whether to create a Kubernetes Service.",
           "default": true
         },
         "type": {
           "type": "string",
+          "description": "Kubernetes Service type.",
           "enum": ["ClusterIP", "NodePort", "LoadBalancer"],
           "default": "ClusterIP"
         },
         "port": {
           "type": "integer",
+          "description": "Port exposed by the Service.",
           "minimum": 1,
           "maximum": 65535,
           "default": 80
         },
         "targetPort": {
           "type": "integer",
+          "description": "Port on the container the Service routes traffic to.",
           "minimum": 1,
           "maximum": 65535,
           "default": 80
         },
         "annotations": {
           "type": "object",
+          "description": "Annotations to add to the Service resource.",
           "additionalProperties": { "type": "string" },
           "default": {}
         }
@@ -91,41 +108,55 @@
     },
     "ingress": {
       "type": "object",
+      "description": "Kubernetes Ingress configuration.",
+      "additionalProperties": false,
       "properties": {
         "enabled": {
           "type": "boolean",
+          "description": "Whether to create a Kubernetes Ingress.",
           "default": false
         },
         "className": {
           "type": "string",
+          "description": "Ingress class name (e.g. nginx, traefik).",
           "default": ""
         },
         "annotations": {
           "type": "object",
+          "description": "Annotations to add to the Ingress resource.",
           "additionalProperties": { "type": "string" },
           "default": {}
         },
         "host": {
           "type": "string",
+          "description": "Single hostname for the Ingress rule. Used when hosts list is empty.",
           "default": ""
         },
         "path": {
           "type": "string",
+          "description": "URL path for the single-host Ingress rule.",
           "default": "/"
         },
         "pathType": {
           "type": "string",
+          "description": "Path type for the single-host Ingress rule.",
           "enum": ["Prefix", "Exact", "ImplementationSpecific"],
           "default": "Prefix"
         },
         "tls": {
           "type": "array",
+          "description": "TLS configuration for the Ingress.",
           "items": {
             "type": "object",
+            "additionalProperties": false,
             "properties": {
-              "secretName": { "type": "string" },
+              "secretName": {
+                "type": "string",
+                "description": "Name of the TLS secret containing the certificate."
+              },
               "hosts": {
                 "type": "array",
+                "description": "Hostnames covered by this TLS entry.",
                 "items": { "type": "string" }
               }
             }
@@ -136,42 +167,58 @@
     },
     "hpa": {
       "type": "object",
+      "description": "HorizontalPodAutoscaler configuration.",
+      "additionalProperties": false,
       "properties": {
         "enabled": {
           "type": "boolean",
+          "description": "Whether to create a HorizontalPodAutoscaler.",
           "default": false
         },
         "minReplicas": {
           "type": "integer",
+          "description": "Minimum number of replicas the HPA will scale down to.",
           "minimum": 1,
           "default": 1
         },
         "maxReplicas": {
           "type": "integer",
+          "description": "Maximum number of replicas the HPA will scale up to.",
           "minimum": 1,
           "default": 10
         },
         "targetCPUUtilizationPercentage": {
           "type": "integer",
+          "description": "Target CPU utilization percentage that triggers scaling (1-100).",
           "minimum": 1,
           "maximum": 100,
           "default": 80
         },
         "targetMemoryUtilizationPercentage": {
           "type": ["integer", "string"],
+          "description": "Target memory utilization percentage that triggers scaling. Leave empty to disable memory-based scaling.",
           "default": ""
         }
       }
     },
     "configMap": {
       "type": "object",
+      "description": "ConfigMap configuration for application configuration data.",
+      "additionalProperties": false,
       "properties": {
         "enabled": {
           "type": "boolean",
+          "description": "Whether to create a ConfigMap.",
           "default": false
+        },
+        "annotations": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "default": {}
         },
         "data": {
           "type": "object",
+          "description": "Key-value pairs to store in the ConfigMap.",
           "additionalProperties": { "type": "string" },
           "default": {}
         }
@@ -179,64 +226,96 @@
     },
     "resources": {
       "type": "object",
+      "description": "CPU and memory resource requests and limits for the container.",
+      "additionalProperties": false,
       "properties": {
         "requests": {
           "type": "object",
+          "description": "Minimum resources the container requires.",
+          "additionalProperties": false,
           "properties": {
-            "cpu": { "type": "string" },
-            "memory": { "type": "string" }
+            "cpu": {
+              "type": "string",
+              "description": "CPU request (e.g. 100m, 0.5)."
+            },
+            "memory": {
+              "type": "string",
+              "description": "Memory request (e.g. 128Mi, 1Gi)."
+            }
           }
         },
         "limits": {
           "type": "object",
+          "description": "Maximum resources the container may consume.",
+          "additionalProperties": false,
           "properties": {
-            "cpu": { "type": "string" },
-            "memory": { "type": "string" }
+            "cpu": {
+              "type": "string",
+              "description": "CPU limit (e.g. 500m, 1)."
+            },
+            "memory": {
+              "type": "string",
+              "description": "Memory limit (e.g. 256Mi, 2Gi)."
+            }
           }
         }
       }
     },
     "podLabels": {
       "type": "object",
+      "description": "Additional labels to add to all pods. Merged with standard chart labels.",
       "additionalProperties": { "type": "string" },
       "default": {}
     },
     "podAnnotations": {
       "type": "object",
+      "description": "Annotations to add to all pods.",
       "additionalProperties": { "type": "string" },
       "default": {}
     },
     "nodeSelector": {
       "type": "object",
+      "description": "Node selector labels to constrain pod scheduling.",
       "additionalProperties": { "type": "string" },
       "default": {}
     },
     "tolerations": {
       "type": "array",
+      "description": "Tolerations to allow pods to schedule on tainted nodes.",
+      "items": { "type": "object" },
       "default": []
     },
     "affinity": {
       "type": "object",
+      "description": "Affinity and anti-affinity rules for pod scheduling.",
       "default": {}
     },
     "livenessProbe": {
       "type": "object",
+      "description": "Liveness probe configuration. The container is restarted if the probe fails.",
       "default": {}
     },
     "readinessProbe": {
       "type": "object",
+      "description": "Readiness probe configuration. Traffic is withheld until the probe succeeds.",
       "default": {}
     },
     "env": {
       "type": "array",
+      "description": "Additional environment variables to inject into the container.",
+      "items": { "type": "object" },
       "default": []
     },
     "volumeMounts": {
       "type": "array",
+      "description": "Additional volume mounts for the container.",
+      "items": { "type": "object" },
       "default": []
     },
     "volumes": {
       "type": "array",
+      "description": "Additional volumes to attach to the pod.",
+      "items": { "type": "object" },
       "default": []
     }
   }

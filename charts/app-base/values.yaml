@@ -35,6 +35,8 @@ service:
   port: 80
   # -- Container target port
   targetPort: 80
+  # -- NodePort number (only used when type is NodePort; valid range 30000-32767)
+  nodePort: ""
   # -- Additional service annotations
   annotations: {}
 
@@ -72,6 +74,8 @@ hpa:
 configMap:
   # -- Whether to create a ConfigMap
   enabled: false
+  # -- Annotations for the ConfigMap
+  annotations: {}
   # -- ConfigMap data (key-value pairs)
   data: {}
 
@@ -84,6 +88,23 @@ resources:
   limits:
     cpu: 500m
     memory: 256Mi
+
+# -- Container port (default 8080)
+containerPort: 8080
+
+# -- Pod-level security context
+podSecurityContext: {}
+#  runAsNonRoot: true
+#  runAsUser: 1000
+#  fsGroup: 2000
+
+# -- Container-level security context
+securityContext: {}
+#  allowPrivilegeEscalation: false
+#  capabilities:
+#    drop:
+#      - ALL
+#  readOnlyRootFilesystem: true
 
 # -- Pod labels (merged with standard labels)
 podLabels: {}

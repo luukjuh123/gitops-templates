@@ -1,5 +1,22 @@
 name: Release Charts
 
+# Triggered on every push to main that touches chart source files.
+# Uses helm/chart-releaser-action which:
+#   1. Detects which charts have a new version compared to the existing GitHub releases.
+#   2. Packages those charts and creates a GitHub Release with the .tgz as an asset.
+#   3. Updates the index.yaml on the gh-pages branch so `helm repo add` works.
+#
+# Versioning convention (enforced by lint.yml version-check job on PRs):
+#   patch (x.y.Z) — backwards-compatible bug fixes (template/value defaults)
+#   minor (x.Y.0) — new backwards-compatible fields or optional features
+#   major (X.0.0) — breaking changes to required values or template structure
+#
+# Consumers pin a chart version in their Chart.yaml dependencies:
+#   dependencies:
+#     - name: app-base
+#       version: "0.1.0"
+#       repository: "https://<owner>.github.io/gitops-templates"
+
 on:
   push:
     branches:
@@ -29,6 +46,15 @@ jobs:
         uses: azure/setup-helm@v4
         with:
           version: v3.14.0
+
+      - name: Lint all charts before releasing
+        run: |
+          failed=0
+          for chart in charts/*/; do
+            echo "Linting $chart"
+            helm lint "$chart" || failed=1
+          done
+          exit $failed
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.6.0
