@@ -1,0 +1,325 @@
+suite: Deployment template tests
+templates:
+  - templates/deployment.yaml
+tests:
+  - it: should render a Deployment by default
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Deployment
+      - equal:
+          path: apiVersion
+          value: apps/v1
+
+  - it: should use the name for metadata.name
+    set:
+      name: my-app
+    asserts:
+      - equal:
+          path: metadata.name
+          value: my-app
+
+  - it: should include standard labels
+    asserts:
+      - isNotEmpty:
+          path: metadata.labels["helm.sh/chart"]
+      - isNotEmpty:
+          path: metadata.labels["app.kubernetes.io/name"]
+      - isNotEmpty:
+          path: metadata.labels["app.kubernetes.io/instance"]
+
+  - it: should set replicas from values when hpa is disabled
+    set:
+      replicas: 3
+      hpa.enabled: false
+    asserts:
+      - equal:
+          path: spec.replicas
+          value: 3
+
+  - it: should omit replicas when hpa is enabled
+    set:
+      hpa.enabled: true
+    asserts:
+      - notExists:
+          path: spec.replicas
+
+  - it: should set selector matchLabels
+    set:
+      name: my-app
+    asserts:
+      - equal:
+          path: spec.selector.matchLabels["app.kubernetes.io/name"]
+          value: my-app
+
+  - it: should set the container image from values
+    set:
+      image.repository: python
+      image.tag: "3.12"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: python:3.12
+
+  - it: should set imagePullPolicy from values
+    set:
+      image.pullPolicy: Always
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].imagePullPolicy
+          value: Always
+
+  - it: should expose the container port from service.targetPort
+    set:
+      service.targetPort: 8080
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].ports[0].containerPort
+          value: 8080
+      - equal:
+          path: spec.template.spec.containers[0].ports[0].name
+          value: http
+
+  - it: should include serviceAccountName when serviceAccount.create is true
+    set:
+      name: my-app
+      serviceAccount.create: true
+    asserts:
+      - equal:
+          path: spec.template.spec.serviceAccountName
+          value: my-app
+
+  - it: should include serviceAccountName when serviceAccount.name is set without create
+    set:
+      serviceAccount.create: false
+      serviceAccount.name: existing-sa
+    asserts:
+      - equal:
+          path: spec.template.spec.serviceAccountName
+          value: existing-sa
+
+  - it: should not include serviceAccountName when create is false and name is empty
+    set:
+      serviceAccount.create: false
+      serviceAccount.name: ""
+    asserts:
+      - notExists:
+          path: spec.template.spec.serviceAccountName
+
+  - it: should add imagePullSecrets when provided
+    set:
+      imagePullSecrets:
+        - registry-secret
+    asserts:
+      - equal:
+          path: spec.template.spec.imagePullSecrets[0].name
+          value: registry-secret
+
+  - it: should not include imagePullSecrets when empty
+    set:
+      imagePullSecrets: []
+    asserts:
+      - notExists:
+          path: spec.template.spec.imagePullSecrets
+
+  - it: should set env variables when provided
+    set:
+      env:
+        - name: APP_ENV
+          value: production
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env[0].name
+          value: APP_ENV
+      - equal:
+          path: spec.template.spec.containers[0].env[0].value
+          value: production
+
+  - it: should not include env when empty
+    set:
+      env: []
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].env
+
+  - it: should set livenessProbe when provided
+    set:
+      livenessProbe:
+        httpGet:
+          path: /health
+          port: http
+        initialDelaySeconds: 10
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.httpGet.path
+          value: /health
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.initialDelaySeconds
+          value: 10
+
+  - it: should not include livenessProbe when empty
+    set:
+      livenessProbe: {}
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].livenessProbe
+
+  - it: should set readinessProbe when provided
+    set:
+      readinessProbe:
+        httpGet:
+          path: /ready
+          port: http
+        initialDelaySeconds: 5
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe.httpGet.path
+          value: /ready
+
+  - it: should not include readinessProbe when empty
+    set:
+      readinessProbe: {}
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].readinessProbe
+
+  - it: should set resource requests and limits from values
+    set:
+      resources.requests.cpu: 250m
+      resources.requests.memory: 256Mi
+      resources.limits.cpu: 1000m
+      resources.limits.memory: 512Mi
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.cpu
+          value: 250m
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.memory
+          value: 256Mi
+      - equal:
+          path: spec.template.spec.containers[0].resources.limits.cpu
+          value: 1000m
+      - equal:
+          path: spec.template.spec.containers[0].resources.limits.memory
+          value: 512Mi
+
+  - it: should set volumeMounts when provided
+    set:
+      volumeMounts:
+        - name: config-vol
+          mountPath: /etc/config
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].volumeMounts[0].name
+          value: config-vol
+      - equal:
+          path: spec.template.spec.containers[0].volumeMounts[0].mountPath
+          value: /etc/config
+
+  - it: should not include volumeMounts when empty
+    set:
+      volumeMounts: []
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].volumeMounts
+
+  - it: should set volumes when provided
+    set:
+      volumes:
+        - name: config-vol
+          configMap:
+            name: my-config
+    asserts:
+      - equal:
+          path: spec.template.spec.volumes[0].name
+          value: config-vol
+
+  - it: should not include volumes when empty
+    set:
+      volumes: []
+    asserts:
+      - notExists:
+          path: spec.template.spec.volumes
+
+  - it: should set nodeSelector when provided
+    set:
+      nodeSelector:
+        disktype: ssd
+    asserts:
+      - equal:
+          path: spec.template.spec.nodeSelector.disktype
+          value: ssd
+
+  - it: should not include nodeSelector when empty
+    set:
+      nodeSelector: {}
+    asserts:
+      - notExists:
+          path: spec.template.spec.nodeSelector
+
+  - it: should set tolerations when provided
+    set:
+      tolerations:
+        - key: dedicated
+          operator: Equal
+          value: gpu
+          effect: NoSchedule
+    asserts:
+      - equal:
+          path: spec.template.spec.tolerations[0].key
+          value: dedicated
+
+  - it: should not include tolerations when empty
+    set:
+      tolerations: []
+    asserts:
+      - notExists:
+          path: spec.template.spec.tolerations
+
+  - it: should set affinity when provided
+    set:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: zone
+                    operator: In
+                    values:
+                      - us-east-1a
+    asserts:
+      - isNotEmpty:
+          path: spec.template.spec.affinity
+
+  - it: should not include affinity when empty
+    set:
+      affinity: {}
+    asserts:
+      - notExists:
+          path: spec.template.spec.affinity
+
+  - it: should set pod labels from podLabels
+    set:
+      podLabels:
+        team: backend
+    asserts:
+      - equal:
+          path: spec.template.metadata.labels["team"]
+          value: backend
+
+  - it: should set pod annotations from podAnnotations
+    set:
+      podAnnotations:
+        prometheus.io/scrape: "true"
+    asserts:
+      - equal:
+          path: spec.template.metadata.annotations["prometheus.io/scrape"]
+          value: "true"
+
+  - it: should not include pod annotations when empty
+    set:
+      podAnnotations: {}
+    asserts:
+      - notExists:
+          path: spec.template.metadata.annotations
