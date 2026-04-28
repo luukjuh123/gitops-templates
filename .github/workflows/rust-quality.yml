@@ -1,4 +1,4 @@
-# ci-template-version: 1.0
+# ci-template-version: 1.1
 name: Rust quality checks
 
 on:
@@ -8,11 +8,18 @@ on:
         description: Rust toolchain channel
         type: string
         default: stable
+      working-directory:
+        description: Directory containing Cargo.toml
+        type: string
+        default: '.'
 
 jobs:
   quality:
     name: Quality (fmt · clippy · deny · codespell)
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
     env:
       RUSTFLAGS: "-D warnings"
     steps:
@@ -29,7 +36,9 @@ jobs:
         uses: EmbarkStudios/cargo-deny-action@v2
         with:
           command: check all
+          manifest-path: ${{ inputs.working-directory }}/Cargo.toml
       - name: Codespell — spell check
         uses: codespell-project/actions-codespell@v2
         with:
           skip: "*.lock,target/"
+          path: ${{ inputs.working-directory }}

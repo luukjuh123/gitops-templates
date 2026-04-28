@@ -6,6 +6,10 @@ inputs:
     description: Python version
     required: false
     default: '3.12'
+  working-directory:
+    description: Directory containing pyproject.toml
+    required: false
+    default: '.'
 
 runs:
   using: composite
@@ -21,3 +25,4 @@ runs:
           **/uv.lock
     - run: uv sync --all-extras --dev
       shell: bash
+      working-directory: ${{ inputs.working-directory }}

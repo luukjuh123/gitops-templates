@@ -1,35 +1,40 @@
-# ci-template-version: 1.0
+# ci-template-version: 1.1
 name: TypeScript security scan
 
 on:
-  workflow_call: {}
+  workflow_call:
+    inputs:
+      working-directory:
+        description: Directory containing package.json
+        type: string
+        default: '.'
 
 jobs:
   npm-audit:
     name: npm audit (dependency CVEs)
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: luukjuh123/gitops-templates/.github/actions/setup-node@main
         with:
-          node-version: '20'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
+          working-directory: ${{ inputs.working-directory }}
       - name: Audit for high/critical CVEs
         run: npm audit --audit-level=high
 
   license-check:
     name: license checker
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: luukjuh123/gitops-templates/.github/actions/setup-node@main
         with:
-          node-version: '20'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
+          working-directory: ${{ inputs.working-directory }}
       - name: Install license-checker
         run: npm install -g license-checker
       - name: Check for prohibited licenses

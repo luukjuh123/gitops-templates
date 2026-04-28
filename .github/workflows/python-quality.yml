@@ -1,4 +1,4 @@
-# ci-template-version: 1.0
+# ci-template-version: 1.1
 name: Python quality checks
 
 on:
@@ -9,19 +9,27 @@ on:
         type: string
         default: '3.12'
       src-dir:
-        description: Source directory for type checking and linting
+        description: Source directory for type checking and linting (relative to working-directory)
         type: string
         default: 'src'
+      working-directory:
+        description: Directory containing pyproject.toml
+        type: string
+        default: '.'
 
 jobs:
   quality:
     name: Quality (ruff · ty · bandit · safety · codespell)
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
     steps:
       - uses: actions/checkout@v4
       - uses: luukjuh123/gitops-templates/.github/actions/setup-python@main
         with:
           python-version: ${{ inputs.python-version }}
+          working-directory: ${{ inputs.working-directory }}
       - name: Ruff — lint
         run: uv run ruff check . --output-format=github
       - name: Ruff — format check
