@@ -2,12 +2,20 @@
 name: Python security scan
 
 on:
-  workflow_call: {}
+  workflow_call:
+    inputs:
+      working-directory:
+        description: Directory containing pyproject.toml
+        type: string
+        default: '.'
 
 jobs:
   bandit:
     name: bandit (SAST)
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -21,6 +29,9 @@ jobs:
   pip-audit:
     name: pip-audit (dependency CVEs)
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

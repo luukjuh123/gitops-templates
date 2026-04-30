@@ -1,4 +1,4 @@
-# ci-template-version: 1.0
+# ci-template-version: 1.1
 name: Rust tests
 
 on:
@@ -12,11 +12,18 @@ on:
         description: Run with all features enabled
         type: boolean
         default: true
+      working-directory:
+        description: Directory containing Cargo.toml
+        type: string
+        default: '.'
 
 jobs:
   test:
     name: cargo nextest + doc tests
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
     steps:
       - uses: actions/checkout@v4
       - uses: luukjuh123/gitops-templates/.github/actions/setup-rust@main

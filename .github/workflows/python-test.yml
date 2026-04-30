@@ -1,4 +1,4 @@
-# ci-template-version: 1.0
+# ci-template-version: 1.1
 name: Python tests
 
 on:
@@ -12,16 +12,24 @@ on:
         description: Minimum coverage percentage
         type: number
         default: 80
+      working-directory:
+        description: Directory containing pyproject.toml
+        type: string
+        default: '.'
 
 jobs:
   test:
     name: pytest + coverage
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
     steps:
       - uses: actions/checkout@v4
       - uses: luukjuh123/gitops-templates/.github/actions/setup-python@main
         with:
           python-version: ${{ inputs.python-version }}
+          working-directory: ${{ inputs.working-directory }}
       - name: Run pytest
         run: |
           uv run pytest \

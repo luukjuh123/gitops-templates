@@ -1,4 +1,4 @@
-# ci-template-version: 1.0
+# ci-template-version: 1.1
 name: Rust release build
 
 on:
@@ -7,11 +7,18 @@ on:
       rust-channel:
         type: string
         default: stable
+      working-directory:
+        description: Directory containing Cargo.toml
+        type: string
+        default: '.'
 
 jobs:
   build:
     name: cargo build --release
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
     steps:
       - uses: actions/checkout@v4
       - uses: luukjuh123/gitops-templates/.github/actions/setup-rust@main

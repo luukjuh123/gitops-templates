@@ -1,4 +1,4 @@
-# ci-template-version: 1.0
+# ci-template-version: 1.1
 name: TypeScript build
 
 on:
@@ -7,15 +7,23 @@ on:
       node-version:
         type: string
         default: '20'
+      working-directory:
+        description: Directory containing package.json
+        type: string
+        default: '.'
 
 jobs:
   build:
     name: npm run build
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
     steps:
       - uses: actions/checkout@v4
       - uses: luukjuh123/gitops-templates/.github/actions/setup-node@main
         with:
           node-version: ${{ inputs.node-version }}
+          working-directory: ${{ inputs.working-directory }}
       - name: Build
         run: npm run build

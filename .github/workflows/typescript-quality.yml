@@ -1,4 +1,4 @@
-# ci-template-version: 1.0
+# ci-template-version: 1.1
 name: TypeScript quality checks
 
 on:
@@ -8,16 +8,24 @@ on:
         description: Node.js version
         type: string
         default: '20'
+      working-directory:
+        description: Directory containing package.json
+        type: string
+        default: '.'
 
 jobs:
   quality:
     name: Quality (eslint · prettier · tsc · npm-audit · codespell)
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
     steps:
       - uses: actions/checkout@v4
       - uses: luukjuh123/gitops-templates/.github/actions/setup-node@main
         with:
           node-version: ${{ inputs.node-version }}
+          working-directory: ${{ inputs.working-directory }}
       - name: ESLint — lint
         run: npm run lint
       - name: Prettier — format check
@@ -30,3 +38,4 @@ jobs:
         uses: codespell-project/actions-codespell@v2
         with:
           skip: "*.lock,node_modules,.next"
+          path: ${{ inputs.working-directory }}
