@@ -103,6 +103,11 @@
           "description": "Annotations to add to the Service resource.",
           "additionalProperties": { "type": "string" },
           "default": {}
+        },
+        "nodePort": {
+          "type": ["integer", "string"],
+          "description": "NodePort number (only used when service.type is NodePort).",
+          "default": ""
         }
       }
     },
@@ -317,6 +322,23 @@
       "description": "Additional volumes to attach to the pod.",
       "items": { "type": "object" },
       "default": []
+    },
+    "containerPort": {
+      "type": "integer",
+      "description": "Container port the application listens on.",
+      "minimum": 1,
+      "maximum": 65535,
+      "default": 8080
+    },
+    "podSecurityContext": {
+      "type": "object",
+      "description": "Pod-level security context.",
+      "default": {}
+    },
+    "securityContext": {
+      "type": "object",
+      "description": "Container-level security context.",
+      "default": {}
     }
   }
 }
