@@ -121,6 +121,14 @@ tolerations: []
 # -- Affinity rules
 affinity: {}
 
+# -- Container startup probe (checked before liveness/readiness; kills container if it fails)
+startupProbe: {}
+#  httpGet:
+#    path: /health
+#    port: http
+#  failureThreshold: 30
+#  periodSeconds: 10
+
 # -- Container liveness probe
 livenessProbe: {}
 #  httpGet:

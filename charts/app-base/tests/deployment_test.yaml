@@ -143,6 +143,29 @@ tests:
       - notExists:
           path: spec.template.spec.containers[0].env
 
+  - it: should set startupProbe when provided
+    set:
+      startupProbe:
+        httpGet:
+          path: /health
+          port: http
+        failureThreshold: 30
+        periodSeconds: 10
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].startupProbe.httpGet.path
+          value: /health
+      - equal:
+          path: spec.template.spec.containers[0].startupProbe.failureThreshold
+          value: 30
+
+  - it: should not include startupProbe when empty
+    set:
+      startupProbe: {}
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].startupProbe
+
   - it: should set livenessProbe when provided
     set:
       livenessProbe:

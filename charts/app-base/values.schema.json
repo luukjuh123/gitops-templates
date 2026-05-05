@@ -305,6 +305,11 @@
       "description": "Readiness probe configuration. Traffic is withheld until the probe succeeds.",
       "default": {}
     },
+    "startupProbe": {
+      "type": "object",
+      "description": "Startup probe configuration. Liveness and readiness probes are disabled until this succeeds.",
+      "default": {}
+    },
     "env": {
       "type": "array",
       "description": "Additional environment variables to inject into the container.",
