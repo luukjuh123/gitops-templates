@@ -1,4 +1,4 @@
-# ci-template-version: 1.1
+# ci-template-version: 1.2
 name: Rust tests
 
 on:
@@ -33,4 +33,12 @@ jobs:
       - name: cargo nextest
         run: cargo nextest run ${{ inputs.all-features && '--all-features' || '' }}
       - name: cargo test — doc tests
-        run: cargo test --doc ${{ inputs.all-features && '--all-features' || '' }}
+        shell: bash
+        run: |
+          has_lib=$(cargo metadata --format-version 1 --no-deps \
+            | jq '[.packages[].targets[] | select(.kind[] == "lib")] | length')
+          if [ "$has_lib" -gt 0 ]; then
+            cargo test --doc ${{ inputs.all-features && '--all-features' || '' }}
+          else
+            echo "No library targets in workspace — skipping doc tests."
+          fi

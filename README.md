@@ -55,7 +55,6 @@ jobs:
 | `rust-quality.yml` | Rust | rust-channel |
 | `rust-test.yml` | Rust | rust-channel, all-features |
 | `rust-build.yml` | Rust | rust-channel |
-| `rust-audit.yml` | Rust | — (also runs on schedule) |
 | `typescript-quality.yml` | TypeScript | node-version |
 | `typescript-test.yml` | TypeScript | node-version |
 | `typescript-build.yml` | TypeScript | node-version |

@@ -19,9 +19,6 @@ jobs:
     needs: quality
     uses: luukjuh123/gitops-templates/.github/workflows/rust-test.yml@main
 
-  audit:
-    uses: luukjuh123/gitops-templates/.github/workflows/rust-audit.yml@main
-
   build:
     needs: test
     uses: luukjuh123/gitops-templates/.github/workflows/rust-build.yml@main
