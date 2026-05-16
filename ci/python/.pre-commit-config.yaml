@@ -38,4 +38,4 @@ repos:
     rev: v2.3.0
     hooks:
       - id: codespell
-        args: [--skip="*.lock,*.json,*.min.js"]
+        args: ["--skip=*.lock,*.json,*.min.js"]
