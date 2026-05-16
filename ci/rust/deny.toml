@@ -7,26 +7,6 @@ ignore = []
 unmaintained = "warn"
 yanked = "warn"
 
-[licenses]
-# Allow commonly used open-source licenses
-allow = [
-  "MIT",
-  "Apache-2.0",
-  "Apache-2.0 WITH LLVM-exception",
-  "BSD-2-Clause",
-  "BSD-3-Clause",
-  "ISC",
-  "Unicode-DFS-2016",
-  "CC0-1.0",
-  "Unlicense",
-  "Zlib",
-]
-deny = []
-copyleft = "warn"
-allow-osi-fsf-free = "neither"
-default = "deny"
-confidence-threshold = 0.8
-
 [bans]
 # Avoid multiple versions of the same crate where possible
 multiple-versions = "warn"
