@@ -31,7 +31,6 @@ All Atlas galaxies reference this repo for:
 | Rust quality | `rust-quality.yml` | rust-channel |
 | Rust tests | `rust-test.yml` | rust-channel, all-features |
 | Rust build | `rust-build.yml` | rust-channel |
-| Rust audit | `rust-audit.yml` | — |
 | TypeScript quality | `typescript-quality.yml` | node-version |
 | TypeScript tests | `typescript-test.yml` | node-version |
 | TypeScript build | `typescript-build.yml` | node-version |
