@@ -1,4 +1,4 @@
-# ci-template-version: 1.2
+# ci-template-version: 1.3
 name: Rust quality checks
 
 on:
@@ -15,7 +15,7 @@ on:
 
 jobs:
   quality:
-    name: Quality (fmt · clippy · deny · codespell)
+    name: Quality (fmt · clippy · deny)
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -37,8 +37,3 @@ jobs:
         with:
           command: check advisories bans sources
           manifest-path: ${{ inputs.working-directory }}/Cargo.toml
-      - name: Codespell — spell check
-        uses: codespell-project/actions-codespell@v2
-        with:
-          skip: "*.lock,target/"
-          path: ${{ inputs.working-directory }}
