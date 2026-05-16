@@ -37,7 +37,10 @@ jobs:
       - name: ty — type check
         run: uv run ty check ${{ inputs.src-dir }}/
       - name: Bandit — security scan
-        run: uv run bandit -r ${{ inputs.src-dir }}/ -c pyproject.toml -f github
+        run: >-
+          uv run bandit -r ${{ inputs.src-dir }}/ -c pyproject.toml
+          -f custom
+          --msg-template "::error file={relpath},line={line},title=Bandit {test_id}::{msg} [{severity}/{confidence}]"
       - name: Safety — dependency CVE check
         run: uv run safety scan --policy-file .safety-policy.yml || true
       - name: Codespell — spell check
