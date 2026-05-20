@@ -37,5 +37,5 @@ jobs:
       - name: Codespell — spell check
         uses: codespell-project/actions-codespell@v2
         with:
-          skip: "*.lock,node_modules,.next"
+          skip: "*.lock,*.json,node_modules,.next"
           path: ${{ inputs.working-directory }}
