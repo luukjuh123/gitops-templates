@@ -20,6 +20,10 @@ on:
         description: Path to Dockerfile (relative to repo root)
         type: string
         default: Dockerfile
+      context:
+        description: Docker build context (relative to repo root)
+        type: string
+        default: "."
       build-args:
         description: Newline-separated Docker build arguments (KEY=VALUE)
         type: string
@@ -65,7 +69,7 @@ jobs:
       - name: Build${{ inputs.push && ' and push' || '' }}
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ${{ inputs.context }}
           file: ${{ inputs.dockerfile }}
           push: ${{ inputs.push }}
           tags: ${{ steps.meta.outputs.tags }}
