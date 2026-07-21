@@ -1,0 +1,30 @@
+# ci-template-version: 1.0
+name: Rust security audit
+
+on:
+  workflow_call:
+    inputs:
+      rust-channel:
+        description: Rust toolchain channel
+        type: string
+        default: stable
+      working-directory:
+        description: Directory containing Cargo.toml
+        type: string
+        default: '.'
+
+jobs:
+  audit:
+    name: cargo audit — RustSec advisories
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: luukjuh123/gitops-templates/.github/actions/setup-rust@main
+        with:
+          rust-channel: ${{ inputs.rust-channel }}
+      - uses: taiki-e/install-action@cargo-audit
+      - name: cargo audit
+        run: cargo audit
