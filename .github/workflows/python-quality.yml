@@ -1,4 +1,4 @@
-# ci-template-version: 1.1
+# ci-template-version: 1.2
 name: Python quality checks
 
 on:
@@ -16,11 +16,19 @@ on:
         description: Directory containing pyproject.toml
         type: string
         default: '.'
+      runner:
+        description: >-
+          Runner label to execute on. Defaults to the GitHub-hosted runner.
+          Set to 'atlas-self-hosted' to run on the Atlas self-hosted runner
+          fleet. See .atlas/axioms/self-hosted-runner-rollout.md in the Atlas
+          workspace before opting a galaxy in.
+        type: string
+        default: 'ubuntu-latest'
 
 jobs:
   quality:
     name: Quality (ruff · ty · bandit · safety · codespell)
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runner }}
     defaults:
       run:
         working-directory: ${{ inputs.working-directory }}

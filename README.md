@@ -50,8 +50,9 @@ jobs:
 
 | Workflow file | Stack | Inputs |
 |---------------|-------|--------|
-| `python-quality.yml` | Python | python-version, src-dir |
-| `python-test.yml` | Python | python-version, coverage-threshold |
+| `python-quality.yml` | Python | python-version, src-dir, working-directory, runner |
+| `python-test.yml` | Python | python-version, coverage-threshold, working-directory, runner |
+| `python-security.yml` | Python | working-directory, runner |
 | `rust-quality.yml` | Rust | rust-channel |
 | `rust-test.yml` | Rust | rust-channel, all-features |
 | `rust-build.yml` | Rust | rust-channel |
@@ -64,6 +65,25 @@ jobs:
 | `docker-build.yml` | Docker | image-name, registry, push |
 
 See `examples/reusable-workflows/` for complete per-stack examples.
+
+### Choosing a runner
+
+The Python workflows accept a `runner` input. It defaults to `ubuntu-latest`
+(GitHub-hosted, metered). Passing `runner: atlas-self-hosted` moves the job to
+the Atlas self-hosted runner fleet, which is not billed per minute:
+
+```yaml
+jobs:
+  quality:
+    uses: luukjuh123/gitops-templates/.github/workflows/python-quality.yml@main
+    with:
+      runner: atlas-self-hosted
+```
+
+Opt in per galaxy — do not change the default. Preconditions and the rollout
+order live in `.atlas/axioms/self-hosted-runner-rollout.md` in the Atlas
+workspace. In short: the repository must be **private**, and lanes needing
+Docker or `sudo` must stay on `ubuntu-latest`.
 
 ### Composite Actions
 
